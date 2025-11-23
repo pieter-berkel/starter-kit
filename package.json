@@ -1,0 +1,26 @@
+{
+  "name": "workspace",
+  "private": true,
+  "packageManager": "bun@1.3.3",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "clean": "git clean -xdf node_modules .turbo",
+    "clean:workspaces": "turbo run clean",
+    "check": "bun ultracite check",
+    "fix": "bun ultracite fix",
+    "db:push": "turbo run db:push --filter=@workspace/db",
+    "db:studio": "turbo run db:studio --filter=@workspace/db"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2",
+    "@types/bun": "latest",
+    "turbo": "^2",
+    "ultracite": "^6",
+    "typescript": "^5"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
