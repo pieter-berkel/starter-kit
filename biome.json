@@ -5,5 +5,15 @@
     "formatter": {
       "quoteStyle": "double"
     }
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noShadowRestrictedNames": "off"
+      },
+      "nursery": {
+        "useConsistentArrowReturn": "off"
+      }
+    }
   }
 }

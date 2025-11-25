@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "@workspace/web/app/globals.css",
+    "css": "../../apps/web/app/globals.css",
     "baseColor": "neutral",
     "cssVariables": true
   },
@@ -16,5 +16,8 @@
     "hooks": "@workspace/ui/hooks",
     "lib": "@workspace/ui/lib",
     "ui": "@workspace/ui/components"
+  },
+  "registries": {
+    "@basecn": "https://basecn.dev/r/{name}.json"
   }
 }
