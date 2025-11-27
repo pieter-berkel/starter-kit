@@ -3,6 +3,7 @@
   "extends": ["ultracite/core", "ultracite/next"],
   "javascript": {
     "formatter": {
+      "lineWidth": 100,
       "quoteStyle": "double"
     }
   },
@@ -12,7 +13,8 @@
         "noShadowRestrictedNames": "off"
       },
       "nursery": {
-        "useConsistentArrowReturn": "off"
+        "useConsistentArrowReturn": "off",
+        "noShadow": "off"
       }
     }
   }

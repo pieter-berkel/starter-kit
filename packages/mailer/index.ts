@@ -1,6 +1,6 @@
 import { resend } from "./lib/resend";
 
-type SendEmailArgs = {
+export type SendEmailArgs = {
   from: string;
   replyTo?: string;
   to: string;
@@ -23,7 +23,7 @@ type SendEmailArgs = {
   }[];
 };
 
-export const sendEmail = async (args: SendEmailArgs) => {
+export const send = async (args: SendEmailArgs) => {
   const { error } = await resend.emails.send({
     ...args,
     text: args.text || "",
@@ -33,5 +33,3 @@ export const sendEmail = async (args: SendEmailArgs) => {
     throw new Error(error.message);
   }
 };
-
-export * from "./send";

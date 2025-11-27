@@ -119,11 +119,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
   html {
     @apply h-full;
   }
+
   body {
     @apply bg-background text-foreground h-full;
     @apply relative isolate; /* for basecn */
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
   }
 }

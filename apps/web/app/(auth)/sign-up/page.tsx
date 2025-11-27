@@ -2,7 +2,7 @@ import { Card, CardContent } from "@workspace/ui/components/card";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { SocialSignInButtons } from "../_components/social-sign-in-buttons";
-import { CredentialsForm } from "./_components/credentials-form";
+import { SignUpForm } from "./_components/sign-up-form";
 
 export default function Page() {
   return (
@@ -10,14 +10,14 @@ export default function Page() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Logo className="mx-auto w-10" />
         <h2 className="mt-6 text-center font-bold text-2xl tracking-tight">
-          Sign in to your account
+          Sign up for an account
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
         <Card>
           <CardContent className="p-6 sm:px-12">
-            <CredentialsForm />
+            <SignUpForm />
             <div>
               <div className="mt-10 flex items-center gap-x-6">
                 <div className="w-full flex-1 border-t" />
@@ -30,12 +30,12 @@ export default function Page() {
         </Card>
 
         <p className="mt-10 text-center text-muted-foreground text-sm">
-          Not a member?{" "}
+          Already have an account?{" "}
           <Link
             className="font-semibold text-primary text-sm hover:text-primary/80"
-            href="/sign-up"
+            href="/sign-in"
           >
-            Sign up
+            Sign in
           </Link>
         </p>
       </div>
