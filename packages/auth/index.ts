@@ -12,6 +12,35 @@ export const auth = betterAuth({
   advanced: { database: { generateId: () => generateID() } },
   user: { deleteUser: { enabled: true } },
   trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 3600, // 1 hour
+    },
+  },
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 30,
+    customRules: {
+      "/sign-in/email": {
+        window: 60,
+        max: 20,
+      },
+      "/sign-up/email": {
+        window: 60,
+        max: 10,
+      },
+      "/request-password-reset": {
+        window: 60,
+        max: 3,
+      },
+      "/reset-password": {
+        window: 60,
+        max: 3,
+      },
+    },
+  },
   plugins: [
     admin(),
     apiKey(),
