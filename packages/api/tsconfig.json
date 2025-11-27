@@ -1,0 +1,5 @@
+{
+  "extends": "@total-typescript/tsconfig/bundler/no-dom/library-monorepo",
+  "include": ["."],
+  "exclude": ["node_modules", ".turbo"]
+}

@@ -1,7 +1,5 @@
 import { db } from "@workspace/db";
 import { generateID } from "@workspace/db/utils/id-generator";
-import { sendEmailVerificationEmail } from "@workspace/mailer/templates/email-verification";
-import { sendPasswordResetEmail } from "@workspace/mailer/templates/password-reset";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
@@ -61,11 +59,15 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
+      const { sendPasswordResetEmail } = await import("@workspace/mailer/templates/password-reset");
       await sendPasswordResetEmail({ to: user.email, link: url, name: user.name });
     },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
+      const { sendEmailVerificationEmail } = await import(
+        "@workspace/mailer/templates/email-verification"
+      );
       await sendEmailVerificationEmail({ to: user.email, link: url, name: user.name });
     },
   },
