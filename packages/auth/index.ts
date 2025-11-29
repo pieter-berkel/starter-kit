@@ -64,11 +64,32 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
+    sendOnSignIn: true,
     sendVerificationEmail: async ({ user, url }) => {
       const { sendEmailVerificationEmail } = await import(
         "@workspace/mailer/templates/email-verification"
       );
       await sendEmailVerificationEmail({ to: user.email, link: url, name: user.name });
+    },
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const member = await db.query.members.findFirst({
+            where: (fields, { eq, isNull, and }) =>
+              and(eq(fields.userId, session.userId), isNull(fields.deletedAt)),
+            orderBy: (fields, { asc }) => asc(fields.createdAt),
+          });
+
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: member?.organizationId,
+            },
+          };
+        },
+      },
     },
   },
 });

@@ -2,11 +2,14 @@
 
 import { useForm } from "@tanstack/react-form";
 import { authClient } from "@workspace/auth/client";
+import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@workspace/ui/components/field";
 import { Input } from "@workspace/ui/components/input";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
+import { AlertTriangleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -20,13 +23,15 @@ const schema = z
     message: "Passwords do not match",
   });
 
-export const ForgotPasswordForm = ({ token }: { token: string }) => {
+export const ResetPasswordForm = ({ token }: { token: string }) => {
   const router = useRouter();
-
+  const [error, setError] = useState<string | null>(null);
   const form = useForm({
     validators: { onSubmit: schema },
     defaultValues: { password: "", confirmPassword: "" },
     onSubmit: async ({ value }) => {
+      setError(null);
+
       await authClient.resetPassword(
         {
           newPassword: value.password,
@@ -34,7 +39,8 @@ export const ForgotPasswordForm = ({ token }: { token: string }) => {
         },
         {
           onError: ({ error }) => {
-            toast.error(error.message || "Something went wrong");
+            setError(error.message || "Something went wrong");
+            return;
           },
           onSuccess: () => {
             toast.success(
@@ -55,6 +61,12 @@ export const ForgotPasswordForm = ({ token }: { token: string }) => {
       }}
     >
       <FieldGroup>
+        {error ? (
+          <Alert className="border-destructive" variant="destructive">
+            <AlertTriangleIcon />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
         <form.Field name="password">
           {(field) => {
             const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;

@@ -9,6 +9,7 @@ export const SocialSignInButtons = ({ className }: { className?: string }) => {
   const handleSocialSignIn = async (provider: string) => {
     const { error } = await authClient.signIn.social({
       provider,
+      callbackURL: "/hub",
     });
 
     if (error) {

@@ -8,36 +8,51 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@workspace/ui/compone
 import { Input } from "@workspace/ui/components/input";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
 import { AlertTriangleIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
+import { slugify } from "@/lib/utils";
 
 const schema = z.object({
-  email: z.email(),
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters")
+    .max(30, "Name must be less than 30 characters"),
 });
 
-export const ForgotPasswordForm = () => {
+export const CreateOrganizationForm = () => {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const form = useForm({
     validators: { onSubmit: schema },
-    defaultValues: { email: "" },
+    defaultValues: { name: "" },
     onSubmit: async ({ value }) => {
       setError(null);
 
-      await authClient.requestPasswordReset(
-        {
-          email: value.email,
-          redirectTo: "/reset-password",
-        },
+      const slug = slugify(value.name);
+
+      const { data, error } = await authClient.organization.create({
+        name: value.name,
+        slug,
+      });
+
+      if (error) {
+        setError(error.message || "Something went wrong");
+        return;
+      }
+
+      toast.success(`Organization ${data.name} created`);
+
+      await authClient.organization.setActive(
+        { organizationId: data.id },
         {
           onError: ({ error }) => {
             setError(error.message || "Something went wrong");
             return;
           },
           onSuccess: () => {
-            toast.success(
-              "Your password reset token has been sent. Please check your email (and spam folder) for the link to reset your password."
-            );
+            router.push("/hub");
           },
         }
       );
@@ -46,6 +61,7 @@ export const ForgotPasswordForm = () => {
 
   return (
     <form
+      id="create-organization-form"
       onSubmit={(e) => {
         e.preventDefault();
         form.handleSubmit();
@@ -58,21 +74,20 @@ export const ForgotPasswordForm = () => {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         ) : null}
-        <form.Field name="email">
+        <form.Field name="name">
           {(field) => {
             const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Email address</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
                 <Input
                   aria-invalid={isInvalid}
-                  autoComplete="email"
+                  autoComplete="off"
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  type="email"
                   value={field.state.value}
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -82,8 +97,12 @@ export const ForgotPasswordForm = () => {
         </form.Field>
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
-            <Button disabled={isSubmitting || !canSubmit} type="submit">
-              <LoadingSwap isLoading={!!isSubmitting}>Request password reset</LoadingSwap>
+            <Button
+              disabled={isSubmitting || !canSubmit}
+              form="create-organization-form"
+              type="submit"
+            >
+              <LoadingSwap isLoading={!!isSubmitting}>Create organizaiton</LoadingSwap>
             </Button>
           )}
         </form.Subscribe>

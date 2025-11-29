@@ -2,13 +2,15 @@
 
 import { useForm } from "@tanstack/react-form";
 import { authClient } from "@workspace/auth/client";
+import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
 import { Checkbox } from "@workspace/ui/components/checkbox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@workspace/ui/components/field";
 import { Input } from "@workspace/ui/components/input";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
+import { AlertTriangleIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -19,29 +21,33 @@ const schema = z.object({
 });
 
 export const CredentialsForm = () => {
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
     validators: { onSubmit: schema },
     defaultValues: { email: "", password: "", rememberMe: false },
     onSubmit: async ({ value }) => {
+      setError(null);
+
       await authClient.signIn.email(
         {
           email: value.email,
           password: value.password,
           rememberMe: value.rememberMe,
+          callbackURL: "/hub",
         },
         {
           onError: ({ error }) => {
             if (error.status === 403) {
-              toast.error("Please verify your email address");
+              setError(
+                "Your account has not been verified yet. Check your email inbox (and spam folder) to verify your email address."
+              );
               return;
             }
-            toast.error(error.message);
+            setError(error.message);
           },
           onSuccess: ({ data }) => {
             toast.success(`Welcome back, ${data.user.name}`);
-            router.push("/");
           },
         }
       );
@@ -56,6 +62,12 @@ export const CredentialsForm = () => {
       }}
     >
       <FieldGroup>
+        {error ? (
+          <Alert className="border-destructive" variant="destructive">
+            <AlertTriangleIcon />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
         <form.Field name="email">
           {(field) => {
             const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
