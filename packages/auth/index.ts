@@ -16,29 +16,6 @@ export const auth = betterAuth({
       maxAge: 3600, // 1 hour
     },
   },
-  rateLimit: {
-    enabled: true,
-    window: 60,
-    max: 30,
-    customRules: {
-      "/sign-in/email": {
-        window: 60,
-        max: 20,
-      },
-      "/sign-up/email": {
-        window: 60,
-        max: 10,
-      },
-      "/request-password-reset": {
-        window: 60,
-        max: 3,
-      },
-      "/reset-password": {
-        window: 60,
-        max: 3,
-      },
-    },
-  },
   plugins: [
     admin(),
     apiKey(),
@@ -91,7 +68,40 @@ export const auth = betterAuth({
         },
       },
     },
+    user: {
+      delete: {
+        before: async (user, request) => {
+          const ownedOrganizations = await getOwnedOrganizations({ userId: user.id });
+
+          await Promise.all(
+            ownedOrganizations.map((org) =>
+              auth.api.deleteOrganization({
+                headers: request?.headers,
+                body: { organizationId: org.id },
+              })
+            )
+          );
+        },
+      },
+    },
   },
 });
 
 export type Auth = typeof auth;
+
+export const getOwnedOrganizations = async ({ userId }: { userId: string }) => {
+  const members = await db.query.members.findMany({
+    where: (fields, { eq, and, isNull }) =>
+      and(eq(fields.userId, userId), eq(fields.role, "owner"), isNull(fields.deletedAt)),
+  });
+
+  const organizations = await db.query.organizations.findMany({
+    where: (fields, { inArray }) =>
+      inArray(
+        fields.id,
+        members.map((m) => m.organizationId)
+      ),
+  });
+
+  return organizations;
+};

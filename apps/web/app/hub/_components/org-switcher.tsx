@@ -71,14 +71,16 @@ export const OrgSwitcher = ({
             }
           >
             <Avatar className="size-8 rounded-lg">
-              <AvatarImage alt={activeOrg.name} src={activeOrg.logo ?? ""} />
-              <AvatarFallback className="rounded-lg bg-primary font-bold uppercase">
-                {activeOrg.name.at(0)}
-              </AvatarFallback>
+              <AvatarImage
+                alt={activeOrg.name}
+                src={
+                  activeOrg.logo ?? `https://api.dicebear.com/9.x/glass/svg?seed=${activeOrg.id}`
+                }
+              />
+              <AvatarFallback className="rounded-lg">{activeOrg.name.at(0)}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{activeOrg.name}</span>
-              <span className="truncate text-xs">{activeOrg.slug}</span>
             </div>
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
@@ -96,8 +98,11 @@ export const OrgSwitcher = ({
                     onClick={() => setActiveOrganization(org.id)}
                   >
                     <Avatar className="size-6 rounded-md">
-                      <AvatarImage alt={org.name} src={org.logo ?? ""} />
-                      <AvatarFallback className="rounded-md bg-primary font-bold text-xs uppercase">
+                      <AvatarImage
+                        alt={org.name}
+                        src={org.logo ?? `https://api.dicebear.com/9.x/glass/svg?seed=${org.id}`}
+                      />
+                      <AvatarFallback className="rounded-md text-xs">
                         {org.name.at(0)}
                       </AvatarFallback>
                     </Avatar>

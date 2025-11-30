@@ -1,7 +1,8 @@
 import { auth } from "@workspace/auth";
-import { SidebarProvider, SidebarTrigger } from "@workspace/ui/components/sidebar";
+import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { HubHeader } from "./_components/hub-header";
 import { HubSidebar } from "./_components/hub-sidebar";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -22,10 +23,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
         organizations={organizations}
         user={session.user}
       />
-      <main>
-        <SidebarTrigger />
+      <SidebarInset>
+        <HubHeader />
         {children}
-      </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

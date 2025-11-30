@@ -16,6 +16,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2",
     "@types/bun": "latest",
+    "prettier": "3.6.2",
     "turbo": "^2",
     "ultracite": "^6"
   },

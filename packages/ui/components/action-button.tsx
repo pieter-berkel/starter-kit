@@ -31,10 +31,10 @@ export const ActionButton = ({
   action,
   confirmation,
   confirmationText = "DELETE",
-  title = "Weet je het zeker?",
-  description = "Deze actie kan niet ongedaan worden gemaakt.",
-  cancelText = "Annuleren",
-  confirmText = "Bevestigen",
+  title = "Are you sure?",
+  description = "This action cannot be undone.",
+  cancelText = "Cancel",
+  confirmText = "Confirm",
   ...props
 }: ActionButtonProps) => {
   const [isLoading, startTransition] = useTransition();
@@ -43,7 +43,7 @@ export const ActionButton = ({
 
   const handleAction = () => {
     if (confirmation === "text" && confirmationInput !== confirmationText) {
-      toast.error("Bevestigingstekst komt niet overeen");
+      toast.error("Confirmation text does not match");
       return;
     }
 
@@ -80,7 +80,7 @@ export const ActionButton = ({
           {confirmation === "text" ? (
             <div>
               <p className="mb-2 font-medium text-sm">
-                Typ <span className="font-semibold">{confirmationText}</span> om te bevestigen.
+                Type <span className="font-semibold">{confirmationText}</span> to confirm.
               </p>
               <Input
                 onChange={(e) => setConfirmationInput(e.target.value)}

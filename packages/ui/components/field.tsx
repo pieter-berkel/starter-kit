@@ -29,8 +29,8 @@ function FieldLegend({
   return (
     <legend
       className={cn(
-        "mb-3 font-medium",
-        "data-[variant=legend]:text-base",
+        "mb-3 font-semibold",
+        "data-[variant=legend]:text-lg",
         "data-[variant=label]:text-sm",
         className
       )}
@@ -54,29 +54,26 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-const fieldVariants = cva(
-  "group/field flex w-full gap-3 data-[invalid=true]:text-destructive",
-  {
-    variants: {
-      orientation: {
-        vertical: ["flex-col [&>*]:w-full [&>.sr-only]:w-auto"],
-        horizontal: [
-          "flex-row items-center",
-          "[&>[data-slot=field-label]]:flex-auto",
-          "has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
-        ],
-        responsive: [
-          "@md/field-group:flex-row flex-col @md/field-group:items-center @md/field-group:[&>*]:w-auto [&>*]:w-full [&>.sr-only]:w-auto",
-          "@md/field-group:[&>[data-slot=field-label]]:flex-auto",
-          "@md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
-        ],
-      },
+const fieldVariants = cva("group/field flex w-full gap-4 data-[invalid=true]:text-destructive", {
+  variants: {
+    orientation: {
+      vertical: ["flex-col [&>*]:w-full [&>.sr-only]:w-auto"],
+      horizontal: [
+        "flex-row items-center",
+        "[&>[data-slot=field-label]]:flex-auto",
+        "has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+      ],
+      responsive: [
+        "@xl/field-group:flex-row flex-col @xl/field-group:items-center @xl/field-group:[&>*]:w-xs [&>*]:w-full [&>.sr-only]:w-auto",
+        "@xl/field-group:[&>[data-slot=field-label]]:flex-auto",
+        "@xl/field-group:has-[>[data-slot=field-content]]:items-start @xl/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+      ],
     },
-    defaultVariants: {
-      orientation: "vertical",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    orientation: "vertical",
+  },
+});
 
 function Field({
   className,
@@ -97,20 +94,14 @@ function Field({
 function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "group/field-content flex flex-1 flex-col gap-1.5 leading-snug",
-        className
-      )}
+      className={cn("group/field-content flex flex-1 flex-col gap-1.5 leading-snug", className)}
       data-slot="field-content"
       {...props}
     />
   );
 }
 
-function FieldLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof Label>) {
+function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
   return (
     <Label
       className={cn(
@@ -206,10 +197,7 @@ function FieldError({
 
     return (
       <ul className="ml-4 flex list-disc flex-col gap-1">
-        {errors.map(
-          (error, index) =>
-            error?.message && <li key={index}>{error.message}</li>
-        )}
+        {errors.map((error, index) => error?.message && <li key={index}>{error.message}</li>)}
       </ul>
     );
   }, [children, errors]);

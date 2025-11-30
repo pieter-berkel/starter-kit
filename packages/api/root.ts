@@ -1,5 +1,5 @@
-import { debugRouter } from "./router/debug";
+import { organizationsRouter } from "./router/organizations";
 
 export const router = {
-  debug: debugRouter,
+  organizations: organizationsRouter,
 };
