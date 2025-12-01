@@ -4,7 +4,7 @@ import { SocialSignInButtons } from "./_components/social-sign-in-buttons";
 
 export default function Page() {
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-6 text-center font-bold text-3xl tracking-tight">Welcome back</h2>
         <p className="mt-2 text-center text-muted-foreground text-sm">

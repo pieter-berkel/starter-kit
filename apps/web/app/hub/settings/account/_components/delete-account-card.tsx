@@ -22,15 +22,9 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@workspace/ui/components/item";
+import { Item, ItemContent, ItemGroup, ItemMedia, ItemTitle } from "@workspace/ui/components/item";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { OctagonAlertIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -95,30 +89,31 @@ export const DeleteAccountCard = ({
                 </div>
               </div>
             </AlertDialogHeader>
-            <ItemGroup className="rounded-lg border">
-              {ownedOrganizations.map((organization) => (
-                <Item key={organization.id}>
-                  <ItemMedia>
-                    <Avatar className="rounded-md">
-                      <AvatarImage
-                        alt={organization.name}
-                        src={
-                          organization.logo ??
-                          `https://api.dicebear.com/9.x/glass/svg?seed=${organization.id}`
-                        }
-                      />
-                      <AvatarFallback className="rounded-md text-xs">
-                        {organization.name.at(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </ItemMedia>
-                  <ItemContent>
-                    <ItemTitle>{organization.name}</ItemTitle>
-                    <ItemDescription>/{organization.slug}</ItemDescription>
-                  </ItemContent>
-                </Item>
-              ))}
-            </ItemGroup>
+            <ScrollArea className="max-h-48 rounded-lg border">
+              <ItemGroup>
+                {ownedOrganizations.map((organization) => (
+                  <Item key={organization.id}>
+                    <ItemMedia>
+                      <Avatar className="rounded-md">
+                        <AvatarImage
+                          alt={organization.name}
+                          src={
+                            organization.logo ??
+                            `https://api.dicebear.com/9.x/glass/svg?seed=${organization.id}`
+                          }
+                        />
+                        <AvatarFallback className="rounded-md text-xs">
+                          {organization.name.at(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle>{organization.name}</ItemTitle>
+                    </ItemContent>
+                  </Item>
+                ))}
+              </ItemGroup>
+            </ScrollArea>
             <div>
               <p className="mb-2 font-medium text-sm">
                 Type <span className="font-semibold">{user.email}</span> to confirm.

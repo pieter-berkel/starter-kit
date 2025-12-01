@@ -1,5 +1,8 @@
 import { db } from "@workspace/db";
 import { generateID } from "@workspace/db/utils/id-generator";
+import { sendEmailVerificationEmail } from "@workspace/mailer/templates/email-verification";
+import { sendMemberInvitationEmail } from "@workspace/mailer/templates/member-invitation";
+import { sendPasswordResetEmail } from "@workspace/mailer/templates/password-reset";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
@@ -10,16 +13,23 @@ export const auth = betterAuth({
   advanced: { database: { generateId: () => generateID() } },
   user: { deleteUser: { enabled: true } },
   trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"],
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 3600, // 1 hour
-    },
-  },
   plugins: [
     admin(),
     apiKey(),
-    organization(),
+    organization({
+      organizationLimit: 5,
+      sendInvitationEmail: async (data) => {
+        const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invitation/${data.id}`;
+
+        await sendMemberInvitationEmail({
+          to: data.email,
+          organizationName: data.organization.name,
+          invitedByEmail: data.inviter.user.email,
+          invitedByUsername: data.inviter.user.name,
+          inviteLink,
+        });
+      },
+    }),
     nextCookies(), // make sure nextCookies is the last plugin
   ],
   socialProviders: {
@@ -34,40 +44,18 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: process.env.NODE_ENV === "production",
     sendResetPassword: async ({ user, url }) => {
-      const { sendPasswordResetEmail } = await import("@workspace/mailer/templates/password-reset");
       await sendPasswordResetEmail({ to: user.email, link: url, name: user.name });
     },
   },
   emailVerification: {
     sendOnSignIn: true,
     sendVerificationEmail: async ({ user, url }) => {
-      const { sendEmailVerificationEmail } = await import(
-        "@workspace/mailer/templates/email-verification"
-      );
       await sendEmailVerificationEmail({ to: user.email, link: url, name: user.name });
     },
   },
   databaseHooks: {
-    session: {
-      create: {
-        before: async (session) => {
-          const member = await db.query.members.findFirst({
-            where: (fields, { eq, isNull, and }) =>
-              and(eq(fields.userId, session.userId), isNull(fields.deletedAt)),
-            orderBy: (fields, { asc }) => asc(fields.createdAt),
-          });
-
-          return {
-            data: {
-              ...session,
-              activeOrganizationId: member?.organizationId,
-            },
-          };
-        },
-      },
-    },
     user: {
       delete: {
         before: async (user, request) => {
@@ -104,4 +92,18 @@ export const getOwnedOrganizations = async ({ userId }: { userId: string }) => {
   });
 
   return organizations;
+};
+
+export const activeDefaultOrganization = async ({ userId }: { userId: string }) => {
+  const member = await db.query.members.findFirst({
+    where: (fields, { eq, isNull, and }) =>
+      and(eq(fields.userId, userId), isNull(fields.deletedAt)),
+    orderBy: (fields, { asc }) => asc(fields.createdAt),
+  });
+
+  if (!member) {
+    return;
+  }
+
+  await auth.api.setActiveOrganization({ body: { organizationId: member.organizationId } });
 };

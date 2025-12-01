@@ -1,4 +1,4 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { id, timestamps } from "../helpers";
 import { organizations } from "./organizations";
@@ -15,5 +15,6 @@ export const invitations = pgTable("invitations", {
     .references(() => organizations.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
   status: text("status").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
   ...timestamps,
 });

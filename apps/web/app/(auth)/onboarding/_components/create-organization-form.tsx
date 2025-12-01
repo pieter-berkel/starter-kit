@@ -102,7 +102,7 @@ export const CreateOrganizationForm = () => {
               form="create-organization-form"
               type="submit"
             >
-              <LoadingSwap isLoading={!!isSubmitting}>Create organizaiton</LoadingSwap>
+              <LoadingSwap isLoading={!!isSubmitting}>Create organization</LoadingSwap>
             </Button>
           )}
         </form.Subscribe>

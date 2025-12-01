@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import type { Auth } from "@workspace/auth";
 import { authClient } from "@workspace/auth/client";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent } from "@workspace/ui/components/card";
@@ -20,30 +21,46 @@ import { LoadingSwap } from "@workspace/ui/components/loading-swap";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
+import { slugify } from "@/lib/utils";
 
 const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.email("Invalid email address"),
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters")
+    .max(30, "Name must be less than 30 characters"),
 });
 
 type FormValues = z.infer<typeof schema>;
 
-export const DetailsCard = ({ defaultValues }: { defaultValues: FormValues }) => {
+export const DetailsCard = ({
+  defaultValues,
+  organizationId,
+  role,
+}: {
+  defaultValues: FormValues;
+  organizationId: string;
+  role: Auth["$Infer"]["Member"]["role"];
+}) => {
   const router = useRouter();
 
   const form = useForm({
     validators: { onSubmit: schema },
     defaultValues,
     onSubmit: async ({ value }) => {
-      await authClient.updateUser(
-        { name: value.name },
+      const slug = slugify(value.name);
+
+      await authClient.organization.update(
+        {
+          data: { name: value.name, slug },
+          organizationId,
+        },
         {
           onError: ({ error }) => {
             toast.error(error.message || "Something went wrong");
             return;
           },
           onSuccess: () => {
-            toast.success("Account details updated");
+            toast.success("Organization details updated");
             router.refresh();
           },
         }
@@ -61,8 +78,8 @@ export const DetailsCard = ({ defaultValues }: { defaultValues: FormValues }) =>
           }}
         >
           <FieldSet>
-            <FieldLegend>Account details</FieldLegend>
-            <FieldDescription>Update your account details.</FieldDescription>
+            <FieldLegend>Organization details</FieldLegend>
+            <FieldDescription>Update your organization details.</FieldDescription>
             <FieldSeparator />
             <FieldGroup>
               <form.Field name="name">
@@ -73,11 +90,12 @@ export const DetailsCard = ({ defaultValues }: { defaultValues: FormValues }) =>
                     <Field data-invalid={isInvalid} orientation="responsive">
                       <FieldContent>
                         <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                        <FieldDescription>Your full name.</FieldDescription>
+                        <FieldDescription>Your organization name.</FieldDescription>
                       </FieldContent>
                       <Input
                         aria-invalid={isInvalid}
-                        autoComplete="name"
+                        autoComplete="organization"
+                        disabled={!["owner", "admin"].includes(role)}
                         id={field.name}
                         name={field.name}
                         onBlur={field.handleBlur}
@@ -89,43 +107,20 @@ export const DetailsCard = ({ defaultValues }: { defaultValues: FormValues }) =>
                   );
                 }}
               </form.Field>
-              <FieldSeparator />
-              <form.Field name="email">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Email address</FieldLabel>
-                        <FieldDescription>
-                          For security reasons, your email address cannot be changed.
-                        </FieldDescription>
-                      </FieldContent>
-                      <Input
-                        aria-invalid={isInvalid}
-                        autoComplete="off"
-                        disabled
-                        id={field.name}
-                        name={field.name}
-                        type="email"
-                        value={field.state.value}
-                      />
-                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                    </Field>
-                  );
-                }}
-              </form.Field>
-              <FieldSeparator />
-              <div>
-                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                  {([canSubmit, isSubmitting]) => (
-                    <Button disabled={isSubmitting || !canSubmit} type="submit">
-                      <LoadingSwap isLoading={!!isSubmitting}>Save changes</LoadingSwap>
-                    </Button>
-                  )}
-                </form.Subscribe>
-              </div>
+              {["owner", "admin"].includes(role) && (
+                <>
+                  <FieldSeparator />
+                  <div>
+                    <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                      {([canSubmit, isSubmitting]) => (
+                        <Button disabled={isSubmitting || !canSubmit} type="submit">
+                          <LoadingSwap isLoading={!!isSubmitting}>Save changes</LoadingSwap>
+                        </Button>
+                      )}
+                    </form.Subscribe>
+                  </div>
+                </>
+              )}
             </FieldGroup>
           </FieldSet>
         </form>

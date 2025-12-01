@@ -7,27 +7,26 @@ import { SessionsCard } from "./_components/sessions-card";
 import { UpdatePasswordCard } from "./_components/update-password-card";
 
 export default async function Page() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const headersList = await headers();
+
+  const [session, sessions] = await Promise.all([
+    auth.api.getSession({ headers: headersList }),
+    auth.api.listSessions({ headers: headersList }),
+  ]);
 
   if (!session) {
     redirect("/sign-in");
   }
 
-  const sessions = await auth.api.listSessions({ headers: await headers() });
   sessions.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
   const ownedOrganizations = await getOwnedOrganizations({ userId: session.user.id });
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 p-6 sm:px-12 sm:py-8">
-      <h1 className="font-bold text-3xl">My account</h1>
-
+    <div className="flex flex-col gap-8">
       <DetailsCard defaultValues={{ name: session.user.name, email: session.user.email }} />
-
       <UpdatePasswordCard />
-
       <SessionsCard activeSessionId={session.session.id} sessions={sessions} />
-
       <DeleteAccountCard ownedOrganizations={ownedOrganizations} user={session.user} />
     </div>
   );

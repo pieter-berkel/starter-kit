@@ -1,3 +1,5 @@
+"use client";
+
 import type { Auth } from "@workspace/auth";
 import {
   Sidebar,
@@ -14,6 +16,7 @@ import {
 } from "@workspace/ui/components/sidebar";
 import { HomeIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { OrgSwitcher } from "./org-switcher";
 import { UserMenu } from "./user-menu";
 
@@ -28,6 +31,8 @@ export const HubSidebar = ({
   organizations: Auth["$Infer"]["Organization"][];
   user: Auth["$Infer"]["Session"]["user"];
 }) => {
+  const pathname = usePathname();
+
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
@@ -40,7 +45,10 @@ export const HubSidebar = ({
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton render={<Link href={item.url} />}>
+                  <SidebarMenuButton
+                    isActive={pathname === item.url}
+                    render={<Link href={item.url} />}
+                  >
                     <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
@@ -53,7 +61,10 @@ export const HubSidebar = ({
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link href="/hub/settings" />}>
+                <SidebarMenuButton
+                  isActive={pathname.startsWith("/hub/settings")}
+                  render={<Link href="/hub/settings/account" />}
+                >
                   <SettingsIcon />
                   <span>Settings</span>
                 </SidebarMenuButton>
