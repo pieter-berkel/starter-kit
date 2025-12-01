@@ -1,4 +1,4 @@
-import { db } from "@workspace/db";
+import { and, db, eq, isNull, schema, sql } from "@workspace/db";
 import { generateID } from "@workspace/db/utils/id-generator";
 import { sendEmailVerificationEmail } from "@workspace/mailer/templates/email-verification";
 import { sendMemberInvitationEmail } from "@workspace/mailer/templates/member-invitation";
@@ -6,7 +6,7 @@ import { sendPasswordResetEmail } from "@workspace/mailer/templates/password-res
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
-import { admin, apiKey, organization } from "better-auth/plugins";
+import { admin, apiKey, createAuthMiddleware, organization } from "better-auth/plugins";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
@@ -55,55 +55,59 @@ export const auth = betterAuth({
       await sendEmailVerificationEmail({ to: user.email, link: url, name: user.name });
     },
   },
-  databaseHooks: {
-    user: {
-      delete: {
-        before: async (user, request) => {
-          const ownedOrganizations = await getOwnedOrganizations({ userId: user.id });
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path === "/delete-user") {
+        const session = await auth.api.getSession({ headers: ctx.headers });
 
-          await Promise.all(
-            ownedOrganizations.map((org) =>
-              auth.api.deleteOrganization({
-                headers: request?.headers,
-                body: { organizationId: org.id },
-              })
-            )
-          );
-        },
-      },
-    },
+        if (!session) {
+          throw new Error("Unauthorized");
+        }
+
+        const ownedOrganizations = await getOwnedOrganizations({ userId: session.user.id });
+
+        for await (const org of ownedOrganizations) {
+          await auth.api.deleteOrganization({
+            headers: ctx.headers,
+            body: { organizationId: org.id },
+          });
+        }
+      }
+    }),
   },
 });
 
 export type Auth = typeof auth;
 
 export const getOwnedOrganizations = async ({ userId }: { userId: string }) => {
-  const members = await db.query.members.findMany({
-    where: (fields, { eq, and, isNull }) =>
-      and(eq(fields.userId, userId), eq(fields.role, "owner"), isNull(fields.deletedAt)),
-  });
-
-  const organizations = await db.query.organizations.findMany({
-    where: (fields, { inArray }) =>
-      inArray(
-        fields.id,
-        members.map((m) => m.organizationId)
-      ),
-  });
-
-  return organizations;
-};
-
-export const activeDefaultOrganization = async ({ userId }: { userId: string }) => {
-  const member = await db.query.members.findFirst({
-    where: (fields, { eq, isNull, and }) =>
-      and(eq(fields.userId, userId), isNull(fields.deletedAt)),
-    orderBy: (fields, { asc }) => asc(fields.createdAt),
-  });
-
-  if (!member) {
-    return;
-  }
-
-  await auth.api.setActiveOrganization({ body: { organizationId: member.organizationId } });
+  return await db
+    .select({
+      id: schema.organizations.id,
+      name: schema.organizations.name,
+      slug: schema.organizations.slug,
+      logo: schema.organizations.logo,
+      metadata: schema.organizations.metadata,
+      createdAt: schema.organizations.createdAt,
+      updatedAt: schema.organizations.updatedAt,
+    })
+    .from(schema.organizations)
+    .innerJoin(
+      schema.members,
+      and(
+        eq(schema.members.organizationId, schema.organizations.id),
+        eq(schema.members.userId, userId),
+        eq(schema.members.role, "owner"),
+        isNull(schema.members.deletedAt)
+      )
+    )
+    .where(
+      sql`(
+        SELECT COUNT(*) 
+        FROM members 
+        WHERE members.organization_id = ${schema.organizations.id} 
+          AND members.role = 'owner' 
+          AND members.deleted_at IS NULL
+      ) = 1`
+    )
+    .groupBy(schema.organizations.id);
 };

@@ -47,20 +47,15 @@ export const DeleteAccountCard = ({
       return;
     }
 
-    await authClient.deleteUser(
-      {
-        callbackURL: "/",
-      },
-      {
-        onError: ({ error }) => {
-          toast.error(error.message);
-        },
-        onSuccess: () => {
-          toast.success("Account deleted successfully");
-          router.push("/");
-        },
-      }
-    );
+    const { error } = await authClient.deleteUser({ callbackURL: "/" });
+
+    if (error) {
+      toast.error(error.message || "Something went wrong");
+      return;
+    }
+
+    toast.success("Account deleted successfully");
+    router.push("/");
   };
 
   return (

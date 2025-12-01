@@ -19,3 +19,8 @@ if (process.env.NODE_ENV === "production") {
   }
   db = global.__postgress;
 }
+
+export { schema };
+
+export * from "drizzle-orm/pg-core";
+export * from "drizzle-orm/sql";
