@@ -29,10 +29,7 @@ export default function Error({
           <Button onClick={reset} size="lg">
             Try again
           </Button>
-          <Link
-            className={buttonVariants({ size: "lg", variant: "ghost" })}
-            href="/"
-          >
+          <Link className={buttonVariants({ size: "lg", variant: "ghost" })} href="/">
             Go back home <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>

@@ -87,7 +87,7 @@ export const MembersCard = ({
       <CardHeader>
         <CardTitle>Members</CardTitle>
         <CardDescription>Manage the members of your organization.</CardDescription>
-        <CardAction>{["owner", "admin"].includes(role) && <InviteMemberDialog />}</CardAction>
+        <CardAction>{["owner", "admin"].includes(role) ? <InviteMemberDialog /> : null}</CardAction>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-full max-h-80">
@@ -168,7 +168,7 @@ export const MembersCard = ({
                       )}
                     </ItemActions>
                   </Item>
-                  {i < members.length - 1 && <ItemSeparator />}
+                  {i < members.length - 1 ? <ItemSeparator /> : null}
                 </Fragment>
               );
             })}

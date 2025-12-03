@@ -16,10 +16,7 @@ export default function NotFound() {
           <Link className={buttonVariants({ size: "lg" })} href="/">
             Go back home
           </Link>
-          <Link
-            className={buttonVariants({ size: "lg", variant: "ghost" })}
-            href="/contact"
-          >
+          <Link className={buttonVariants({ size: "lg", variant: "ghost" })} href="/contact">
             Contact support <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>

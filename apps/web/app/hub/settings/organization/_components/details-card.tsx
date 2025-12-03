@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { Auth } from "@workspace/auth";
 import { authClient } from "@workspace/auth/client";
 import { Button } from "@workspace/ui/components/button";
@@ -19,6 +19,7 @@ import {
 import { Input } from "@workspace/ui/components/input";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { slugify } from "@/lib/utils";
@@ -43,81 +44,72 @@ export const DetailsCard = ({
 }) => {
   const router = useRouter();
 
-  const form = useForm({
-    validators: { onSubmit: schema },
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues,
-    onSubmit: async ({ value }) => {
-      const slug = slugify(value.name);
-
-      await authClient.organization.update(
-        {
-          data: { name: value.name, slug },
-          organizationId,
-        },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message || "Something went wrong");
-            return;
-          },
-          onSuccess: () => {
-            toast.success("Organization details updated");
-            router.refresh();
-          },
-        }
-      );
-    },
   });
+
+  const onSubmit = async (data: FormValues) => {
+    const slug = slugify(data.name);
+
+    await authClient.organization.update(
+      {
+        data: { name: data.name, slug },
+        organizationId,
+      },
+      {
+        onError: ({ error }) => {
+          toast.error(error.message || "Something went wrong");
+          return;
+        },
+        onSuccess: () => {
+          toast.success("Organization details updated");
+          router.refresh();
+        },
+      }
+    );
+  };
 
   return (
     <Card>
       <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldLegend>Organization details</FieldLegend>
             <FieldDescription>Update your organization details.</FieldDescription>
             <FieldSeparator />
             <FieldGroup>
-              <form.Field name="name">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                        <FieldDescription>Your organization name.</FieldDescription>
-                      </FieldContent>
+              <Controller
+                control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} orientation="responsive">
+                    <FieldContent>
+                      <FieldLabel htmlFor="organization-details-name">Name</FieldLabel>
+                      <FieldDescription>Your organization name.</FieldDescription>
+                    </FieldContent>
+                    <div className="flex flex-col gap-2">
                       <Input
-                        aria-invalid={isInvalid}
+                        {...field}
+                        aria-invalid={fieldState.invalid}
                         autoComplete="organization"
                         disabled={!["owner", "admin"].includes(role)}
-                        id={field.name}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        value={field.state.value}
+                        id="organization-details-name"
                       />
-                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                    </Field>
-                  );
-                }}
-              </form.Field>
+                      {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                    </div>
+                  </Field>
+                )}
+              />
               {["owner", "admin"].includes(role) && (
                 <>
                   <FieldSeparator />
                   <div>
-                    <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                      {([canSubmit, isSubmitting]) => (
-                        <Button disabled={isSubmitting || !canSubmit} type="submit">
-                          <LoadingSwap isLoading={!!isSubmitting}>Save changes</LoadingSwap>
-                        </Button>
-                      )}
-                    </form.Subscribe>
+                    <Button disabled={form.formState.isSubmitting} type="submit">
+                      <LoadingSwap isLoading={!!form.formState.isSubmitting}>
+                        Save changes
+                      </LoadingSwap>
+                    </Button>
                   </div>
                 </>
               )}

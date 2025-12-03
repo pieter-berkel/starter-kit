@@ -16,10 +16,9 @@ export const sessions = pgTable(
     userAgent: text("user_agent"),
     expiresAt: timestamp("expires_at").notNull(),
     impersonatedBy: text("impersonated_by"),
-    activeOrganizationId: text("active_organization_id").references(
-      () => organizations.id,
-      { onDelete: "set null" }
-    ),
+    activeOrganizationId: text("active_organization_id").references(() => organizations.id, {
+      onDelete: "set null",
+    }),
     ...timestamps,
   },
   (t) => [index("sessions_token_idx").on(t.token)]

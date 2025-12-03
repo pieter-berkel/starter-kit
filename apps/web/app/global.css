@@ -6,7 +6,6 @@
 @source "..";
 @source "../../../packages/ui/components";
 
-
 @source "../node_modules/@uploadthing/react/dist";
 
 @custom-variant dark (&:is(.dark *));
@@ -123,7 +122,7 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   html {
     @apply h-full;
   }

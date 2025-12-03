@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@workspace/auth/client";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent } from "@workspace/ui/components/card";
@@ -18,6 +18,7 @@ import {
 import { Input } from "@workspace/ui/components/input";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -31,100 +32,88 @@ type FormValues = z.infer<typeof schema>;
 export const DetailsCard = ({ defaultValues }: { defaultValues: FormValues }) => {
   const router = useRouter();
 
-  const form = useForm({
-    validators: { onSubmit: schema },
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues,
-    onSubmit: async ({ value }) => {
-      await authClient.updateUser(
-        { name: value.name },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message || "Something went wrong");
-            return;
-          },
-          onSuccess: () => {
-            toast.success("Account details updated");
-            router.refresh();
-          },
-        }
-      );
-    },
   });
+
+  const onSubmit = async (data: FormValues) => {
+    await authClient.updateUser(
+      { name: data.name },
+      {
+        onError: ({ error }) => {
+          toast.error(error.message || "Something went wrong");
+          return;
+        },
+        onSuccess: () => {
+          toast.success("Account details updated");
+          router.refresh();
+        },
+      }
+    );
+  };
 
   return (
     <Card>
       <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldLegend>Account details</FieldLegend>
             <FieldDescription>Update your account details.</FieldDescription>
             <FieldSeparator />
             <FieldGroup>
-              <form.Field name="name">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                        <FieldDescription>Your full name.</FieldDescription>
-                      </FieldContent>
+              <Controller
+                control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} orientation="responsive">
+                    <FieldContent>
+                      <FieldLabel htmlFor="account-details-name">Name</FieldLabel>
+                      <FieldDescription>Your full name.</FieldDescription>
+                    </FieldContent>
+                    <div className="flex flex-col gap-2">
                       <Input
-                        aria-invalid={isInvalid}
+                        {...field}
+                        aria-invalid={fieldState.invalid}
                         autoComplete="name"
-                        id={field.name}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        value={field.state.value}
+                        id="account-details-name"
                       />
-                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                    </Field>
-                  );
-                }}
-              </form.Field>
+                      {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                    </div>
+                  </Field>
+                )}
+              />
               <FieldSeparator />
-              <form.Field name="email">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Email address</FieldLabel>
-                        <FieldDescription>
-                          For security reasons, your email address cannot be changed.
-                        </FieldDescription>
-                      </FieldContent>
+              <Controller
+                control={form.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} orientation="responsive">
+                    <FieldContent>
+                      <FieldLabel htmlFor="account-details-email">Email address</FieldLabel>
+                      <FieldDescription>
+                        For security reasons, your email address cannot be changed.
+                      </FieldDescription>
+                    </FieldContent>
+                    <div className="flex flex-col gap-2">
                       <Input
-                        aria-invalid={isInvalid}
+                        {...field}
+                        aria-invalid={fieldState.invalid}
                         autoComplete="off"
                         disabled
-                        id={field.name}
-                        name={field.name}
+                        id="account-details-email"
                         type="email"
-                        value={field.state.value}
                       />
-                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                    </Field>
-                  );
-                }}
-              </form.Field>
+                      {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                    </div>
+                  </Field>
+                )}
+              />
               <FieldSeparator />
               <div>
-                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                  {([canSubmit, isSubmitting]) => (
-                    <Button disabled={isSubmitting || !canSubmit} type="submit">
-                      <LoadingSwap isLoading={!!isSubmitting}>Save changes</LoadingSwap>
-                    </Button>
-                  )}
-                </form.Subscribe>
+                <Button disabled={form.formState.isSubmitting} type="submit">
+                  <LoadingSwap isLoading={!!form.formState.isSubmitting}>Save changes</LoadingSwap>
+                </Button>
               </div>
             </FieldGroup>
           </FieldSet>

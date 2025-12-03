@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@workspace/auth/client";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent } from "@workspace/ui/components/card";
@@ -18,6 +18,7 @@ import {
 import { Input } from "@workspace/ui/components/input";
 import { LoadingSwap } from "@workspace/ui/components/loading-swap";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -32,143 +33,128 @@ const schema = z
     message: "Passwords do not match",
   });
 
+type FormValues = z.infer<typeof schema>;
+
 export const UpdatePasswordCard = () => {
   const router = useRouter();
 
-  const form = useForm({
-    validators: { onSubmit: schema },
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
-    onSubmit: async ({ value }) => {
-      await authClient.changePassword(
-        {
-          currentPassword: value.currentPassword,
-          newPassword: value.newPassword,
-        },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message || "Something went wrong");
-            return;
-          },
-          onSuccess: () => {
-            toast.success("Password updated successfully");
-            form.reset();
-            router.refresh();
-          },
-        }
-      );
-    },
   });
+
+  const onSubmit = async (data: FormValues) => {
+    await authClient.changePassword(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      },
+      {
+        onError: ({ error }) => {
+          toast.error(error.message || "Something went wrong");
+          return;
+        },
+        onSuccess: () => {
+          toast.success("Password updated successfully");
+          form.reset();
+          router.refresh();
+        },
+      }
+    );
+  };
 
   return (
     <Card>
       <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldLegend>Password</FieldLegend>
             <FieldDescription>Update your password to keep your account secure.</FieldDescription>
             <FieldSeparator />
             <FieldGroup>
-              <form.Field name="currentPassword">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Current password</FieldLabel>
-                        <FieldDescription>Enter your current password.</FieldDescription>
-                      </FieldContent>
-                      <div className="flex flex-col gap-2">
-                        <Input
-                          aria-invalid={isInvalid}
-                          autoComplete="current-password"
-                          id={field.name}
-                          name={field.name}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          type="password"
-                          value={field.state.value}
-                        />
-                        {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                      </div>
-                    </Field>
-                  );
-                }}
-              </form.Field>
+              <Controller
+                control={form.control}
+                name="currentPassword"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} orientation="responsive">
+                    <FieldContent>
+                      <FieldLabel htmlFor="update-password-currentPassword">
+                        Current password
+                      </FieldLabel>
+                      <FieldDescription>Enter your current password.</FieldDescription>
+                    </FieldContent>
+                    <div className="flex flex-col gap-2">
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="current-password"
+                        id="update-password-currentPassword"
+                        type="password"
+                      />
+                      {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                    </div>
+                  </Field>
+                )}
+              />
               <FieldSeparator />
-              <form.Field name="newPassword">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>New password</FieldLabel>
-                        <FieldDescription>Must be at least 8 characters long.</FieldDescription>
-                      </FieldContent>
-                      <div className="flex flex-col gap-2">
-                        <Input
-                          aria-invalid={isInvalid}
-                          autoComplete="new-password"
-                          id={field.name}
-                          name={field.name}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          type="password"
-                          value={field.state.value}
-                        />
-                        {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                      </div>
-                    </Field>
-                  );
-                }}
-              </form.Field>
+              <Controller
+                control={form.control}
+                name="newPassword"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} orientation="responsive">
+                    <FieldContent>
+                      <FieldLabel htmlFor="update-password-newPassword">New password</FieldLabel>
+                      <FieldDescription>Must be at least 8 characters long.</FieldDescription>
+                    </FieldContent>
+                    <div className="flex flex-col gap-2">
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="new-password"
+                        id="update-password-newPassword"
+                        type="password"
+                      />
+                      {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                    </div>
+                  </Field>
+                )}
+              />
               <FieldSeparator />
-              <form.Field name="confirmPassword">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-                  return (
-                    <Field data-invalid={isInvalid} orientation="responsive">
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Confirm new password</FieldLabel>
-                        <FieldDescription>Re-enter your new password to confirm.</FieldDescription>
-                      </FieldContent>
-                      <div className="flex flex-col gap-2">
-                        <Input
-                          aria-invalid={isInvalid}
-                          autoComplete="new-password"
-                          id={field.name}
-                          name={field.name}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          type="password"
-                          value={field.state.value}
-                        />
-                        {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                      </div>
-                    </Field>
-                  );
-                }}
-              </form.Field>
+              <Controller
+                control={form.control}
+                name="confirmPassword"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} orientation="responsive">
+                    <FieldContent>
+                      <FieldLabel htmlFor="update-password-confirmPassword">
+                        Confirm new password
+                      </FieldLabel>
+                      <FieldDescription>Re-enter your new password to confirm.</FieldDescription>
+                    </FieldContent>
+                    <div className="flex flex-col gap-2">
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="new-password"
+                        id="update-password-confirmPassword"
+                        type="password"
+                      />
+                      {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                    </div>
+                  </Field>
+                )}
+              />
               <FieldSeparator />
               <div>
-                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                  {([canSubmit, isSubmitting]) => (
-                    <Button disabled={isSubmitting || !canSubmit} type="submit">
-                      <LoadingSwap isLoading={!!isSubmitting}>Update password</LoadingSwap>
-                    </Button>
-                  )}
-                </form.Subscribe>
+                <Button disabled={form.formState.isSubmitting} type="submit">
+                  <LoadingSwap isLoading={!!form.formState.isSubmitting}>
+                    Update password
+                  </LoadingSwap>
+                </Button>
               </div>
             </FieldGroup>
           </FieldSet>

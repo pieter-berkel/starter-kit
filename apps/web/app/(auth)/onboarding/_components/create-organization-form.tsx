@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@workspace/auth/client";
 import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { Button } from "@workspace/ui/components/button";
@@ -10,6 +10,7 @@ import { LoadingSwap } from "@workspace/ui/components/loading-swap";
 import { AlertTriangleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { slugify } from "@/lib/utils";
@@ -21,52 +22,49 @@ const schema = z.object({
     .max(30, "Name must be less than 30 characters"),
 });
 
+type FormValues = z.infer<typeof schema>;
+
 export const CreateOrganizationForm = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const form = useForm({
-    validators: { onSubmit: schema },
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: { name: "" },
-    onSubmit: async ({ value }) => {
-      setError(null);
-
-      const slug = slugify(value.name);
-
-      const { data, error } = await authClient.organization.create({
-        name: value.name,
-        slug,
-      });
-
-      if (error) {
-        setError(error.message || "Something went wrong");
-        return;
-      }
-
-      toast.success(`Organization ${data.name} created`);
-
-      await authClient.organization.setActive(
-        { organizationId: data.id },
-        {
-          onError: ({ error }) => {
-            setError(error.message || "Something went wrong");
-            return;
-          },
-          onSuccess: () => {
-            router.push("/hub");
-          },
-        }
-      );
-    },
   });
 
+  const onSubmit = async (data: FormValues) => {
+    setError(null);
+
+    const slug = slugify(data.name);
+
+    const { data: orgData, error: orgError } = await authClient.organization.create({
+      name: data.name,
+      slug,
+    });
+
+    if (orgError) {
+      setError(orgError.message || "Something went wrong");
+      return;
+    }
+
+    toast.success(`Organization ${orgData.name} created`);
+
+    await authClient.organization.setActive(
+      { organizationId: orgData.id },
+      {
+        onError: ({ error }) => {
+          setError(error.message || "Something went wrong");
+          return;
+        },
+        onSuccess: () => {
+          router.push("/hub");
+        },
+      }
+    );
+  };
+
   return (
-    <form
-      id="create-organization-form"
-      onSubmit={(e) => {
-        e.preventDefault();
-        form.handleSubmit();
-      }}
-    >
+    <form id="create-organization-form" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         {error ? (
           <Alert className="border-destructive" variant="destructive">
@@ -74,38 +72,29 @@ export const CreateOrganizationForm = () => {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         ) : null}
-        <form.Field name="name">
-          {(field) => {
-            const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-            return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                <Input
-                  aria-invalid={isInvalid}
-                  autoComplete="off"
-                  id={field.name}
-                  name={field.name}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  value={field.state.value}
-                />
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
-        </form.Field>
-        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-          {([canSubmit, isSubmitting]) => (
-            <Button
-              disabled={isSubmitting || !canSubmit}
-              form="create-organization-form"
-              type="submit"
-            >
-              <LoadingSwap isLoading={!!isSubmitting}>Create organization</LoadingSwap>
-            </Button>
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="create-organization-form-name">Name</FieldLabel>
+              <Input
+                {...field}
+                aria-invalid={fieldState.invalid}
+                autoComplete="off"
+                id="create-organization-form-name"
+              />
+              {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+            </Field>
           )}
-        </form.Subscribe>
+        />
+        <Button
+          disabled={form.formState.isSubmitting}
+          form="create-organization-form"
+          type="submit"
+        >
+          <LoadingSwap isLoading={!!form.formState.isSubmitting}>Create organization</LoadingSwap>
+        </Button>
       </FieldGroup>
     </form>
   );

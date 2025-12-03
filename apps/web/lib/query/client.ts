@@ -1,8 +1,5 @@
 import { StandardRPCJsonSerializer } from "@orpc/client/standard";
-import {
-  defaultShouldDehydrateQuery,
-  QueryClient,
-} from "@tanstack/react-query";
+import { defaultShouldDehydrateQuery, QueryClient } from "@tanstack/react-query";
 
 const serializer = new StandardRPCJsonSerializer();
 
@@ -18,8 +15,7 @@ export const createQueryClient = () => {
       },
       dehydrate: {
         shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === "pending",
+          defaultShouldDehydrateQuery(query) || query.state.status === "pending",
         shouldRedactErrors: () => {
           // We should not catch Next.js server errors
           // as that's how Next.js detects dynamic pages
