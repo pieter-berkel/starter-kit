@@ -17,19 +17,19 @@ export const proxy = async (request: NextRequest) => {
         const redirectURL = `/invitation/${invitationId}`;
         cookieStore.set("better-auth.redirect", redirectURL, { maxAge: 3600 });
       }
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      return NextResponse.redirect(new URL("/sign-in", request.url), { status: 302 });
     }
     return NextResponse.next();
   }
 
   if (!session) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+    return NextResponse.redirect(new URL("/sign-in", request.url), { status: 302 });
   }
 
   const redirectCookie = cookieStore.get("better-auth.redirect");
   if (redirectCookie?.value) {
     cookieStore.delete("better-auth.redirect");
-    return NextResponse.redirect(new URL(redirectCookie.value, request.url));
+    return NextResponse.redirect(new URL(redirectCookie.value, request.url), { status: 302 });
   }
 
   if (pathname === "/select-organization") {
@@ -37,7 +37,7 @@ export const proxy = async (request: NextRequest) => {
   }
 
   if (!session.session.activeOrganizationId) {
-    return NextResponse.redirect(new URL("/select-organization", request.url));
+    return NextResponse.redirect(new URL("/select-organization", request.url), { status: 302 });
   }
 
   return NextResponse.next();

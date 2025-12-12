@@ -29,6 +29,7 @@ type FormValues = z.infer<typeof schema>;
 export const ResetPasswordForm = ({ token }: { token: string }) => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { password: "", confirmPassword: "" },

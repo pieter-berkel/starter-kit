@@ -14,13 +14,16 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@workspace/ui/components/sidebar";
-import { HomeIcon, SettingsIcon } from "lucide-react";
+import { FileBracesCornerIcon, HomeIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { OrgSwitcher } from "./org-switcher";
 import { UserMenu } from "./user-menu";
 
-const items = [{ title: "Hub", url: "/hub", icon: HomeIcon }];
+const items = [
+  { title: "Hub", url: "/hub", icon: HomeIcon },
+  { title: "Pages", url: "/hub/pages", icon: FileBracesCornerIcon },
+];
 
 export const HubSidebar = ({
   activeOrganizationId,

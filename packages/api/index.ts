@@ -1,7 +1,7 @@
 import type { InferRouterInputs, InferRouterOutputs } from "@orpc/server";
-import type { router } from "./root";
+import type { router } from "./router";
 
-export { router } from "./root";
+export { router } from "./router";
 
 type RouterInputs = InferRouterInputs<typeof router>;
 type RouterOutputs = InferRouterOutputs<typeof router>;

@@ -13,7 +13,7 @@
   "dependencies": {
     "@workspace/db": "workspace:*",
     "@workspace/mailer": "workspace:*",
-    "better-auth": "^1.4.1"
+    "better-auth": "^1.4.5"
   },
   "devDependencies": {
     "@total-typescript/tsconfig": "^1.0.4",

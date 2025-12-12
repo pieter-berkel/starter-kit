@@ -61,12 +61,12 @@ const fieldVariants = cva("group/field flex w-full gap-4 data-[invalid=true]:tex
       horizontal: [
         "flex-row items-center",
         "[&>[data-slot=field-label]]:flex-auto",
-        "has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
       ],
       responsive: [
         "@xl/field-group:flex-row flex-col @xl/field-group:items-center @xl/field-group:[&>*]:w-xs [&>*]:w-full [&>.sr-only]:w-auto",
         "@xl/field-group:[&>[data-slot=field-label]]:flex-auto",
-        "@xl/field-group:has-[>[data-slot=field-content]]:items-start @xl/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "@xl/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
       ],
     },
   },

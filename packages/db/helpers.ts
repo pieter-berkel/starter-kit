@@ -5,7 +5,7 @@ export const id = text("id")
   .primaryKey()
   .$defaultFn(() => generateID());
 
-export const createdAt = timestamp("created_at").notNull().defaultNow();
+export const createdAt = timestamp("created_at").defaultNow().notNull();
 
 export const updatedAt = timestamp("updated_at")
   .notNull()

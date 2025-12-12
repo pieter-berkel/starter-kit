@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { ResetPasswordForm } from "./_components/reset-password-form";
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ token: string }> }) {
-  const { token } = await searchParams;
+export default async function Page(props: PageProps<"/reset-password">) {
+  const { token } = await props.searchParams;
+
+  if (typeof token !== "string") {
+    throw new Error("Token is required");
+  }
 
   return (
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">

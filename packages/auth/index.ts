@@ -58,6 +58,7 @@ export const auth = betterAuth({
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path === "/delete-user") {
+        // @ts-ignore
         const session = await auth.api.getSession({ headers: ctx.headers });
 
         if (!session) {
@@ -68,6 +69,7 @@ export const auth = betterAuth({
 
         for await (const org of ownedOrganizations) {
           await auth.api.deleteOrganization({
+            // @ts-ignore
             headers: ctx.headers,
             body: { organizationId: org.id },
           });

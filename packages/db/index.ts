@@ -1,26 +1,38 @@
-/** biome-ignore-all lint/performance/noNamespaceImport: <explanation> */
+/** biome-ignore-all lint/performance/noNamespaceImport: Drizzle expects the schema as a namespace (`import * as schema`) so we can pass it to `drizzle()` and keep it strongly typed. */
+/** biome-ignore-all lint/style/noExportedImports: We intentionally re-export the `schema` namespace from this package so downstream packages can reference tables/types from a single entrypoint. */
 
-import { sql } from "bun";
+import { SQL } from "bun";
 import { type BunSQLDatabase, drizzle } from "drizzle-orm/bun-sql";
 
 import * as schema from "./schema";
 
+export type Database = BunSQLDatabase<typeof schema>;
+
 declare global {
-  var __postgress: BunSQLDatabase<typeof schema> | undefined;
+  // Prevents multiple connections during HMR in dev
+  var __postgres: BunSQLDatabase<typeof schema> | undefined;
 }
 
-export let db: BunSQLDatabase<typeof schema>;
-
-if (process.env.NODE_ENV === "production") {
-  db = drizzle(sql, { schema, casing: "snake_case" });
-} else {
-  if (!global.__postgress) {
-    global.__postgress = drizzle(sql, { schema, casing: "snake_case" });
+const initDB = () => {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not set");
   }
-  db = global.__postgress;
-}
+
+  const client = new SQL(process.env.DATABASE_URL);
+
+  return drizzle(client, { schema, casing: "snake_case" });
+};
+
+export const db: Database = (() => {
+  if (process.env.NODE_ENV === "production") {
+    return initDB();
+  }
+
+  if (!global.__postgres) {
+    global.__postgres = initDB();
+  }
+
+  return global.__postgres;
+})();
 
 export { schema };
-
-export * from "drizzle-orm/pg-core";
-export * from "drizzle-orm/sql";

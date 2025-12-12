@@ -5,6 +5,14 @@ import { router } from "@workspace/api";
 import { auth } from "@workspace/auth";
 import { headers } from "next/headers";
 
+const getHeadersIfAvailable = () => {
+  try {
+    return headers();
+  } catch {
+    return null;
+  }
+};
+
 globalThis.$client = createRouterClient(router, {
   /**
    * Provide initial context if needed.
@@ -14,7 +22,7 @@ globalThis.$client = createRouterClient(router, {
    * For per-request context, use middleware context or pass a function as the initial context.
    */
   context: async () => ({
-    headers: await headers(),
+    headers: await getHeadersIfAvailable(),
     auth,
     scope: "internal",
   }),

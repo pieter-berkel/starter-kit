@@ -6,7 +6,7 @@ type Scope = "client" | "internal";
 type Role = "user" | "admin";
 
 export type Context = {
-  headers: Headers;
+  headers: Headers | null;
   auth: Auth;
   scope: Scope;
 };
@@ -66,7 +66,7 @@ export const accessMiddleware = <const T extends readonly AccessRule[]>(
     }
 
     const session = await context.auth.api.getSession({
-      headers: context.headers,
+      headers: context.headers ?? new Headers(),
     });
 
     if (rules.includes(context.scope) || rules.includes("*")) {
