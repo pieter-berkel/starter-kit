@@ -1,6 +1,6 @@
-import { procedure } from "../lib/orpc";
+import { base } from "../lib/orpc";
 import { pagesRouter } from "./pages";
 
-export const router = procedure.router({
+export const router = base.router({
   pages: pagesRouter,
 });

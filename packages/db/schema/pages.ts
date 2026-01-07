@@ -1,4 +1,5 @@
-import { boolean, index, pgTable, text } from "drizzle-orm/pg-core";
+import { isNull } from "drizzle-orm";
+import { boolean, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 import z from "zod";
 import { id, timestamps } from "../helpers";
 
@@ -13,7 +14,7 @@ export const pages = pgTable(
     published: boolean("published").notNull(),
     ...timestamps,
   },
-  (t) => [index("pages_slug_idx").on(t.slug)]
+  (t) => [uniqueIndex("pages_slug_idx").on(t.slug).where(isNull(t.deletedAt))]
 );
 
 export const createPageSchema = z.object({

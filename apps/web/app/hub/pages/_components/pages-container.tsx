@@ -42,8 +42,7 @@ export const PagesContainer = () => {
   const { data, error, isLoading, refetch } = useQuery(
     orpc.pages.list.queryOptions({
       input: {
-        pagination: { cursor, limit: 20, withCount: true },
-        orderBy: ["published:desc", "title"],
+        filters: { published: true },
       },
       placeholderData: (prev) => prev,
     })

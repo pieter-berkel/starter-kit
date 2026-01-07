@@ -1,4 +1,4 @@
-import { and, db, eq, isNull, schema, sql } from "@workspace/db";
+import { db, schema } from "@workspace/db";
 import { generateID } from "@workspace/db/utils/id-generator";
 import { sendEmailVerificationEmail } from "@workspace/mailer/templates/email-verification";
 import { sendMemberInvitationEmail } from "@workspace/mailer/templates/member-invitation";
@@ -7,6 +7,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
 import { admin, apiKey, createAuthMiddleware, organization } from "better-auth/plugins";
+import { and, eq, isNull, sql } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
@@ -58,7 +59,6 @@ export const auth = betterAuth({
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path === "/delete-user") {
-        // @ts-ignore
         const session = await auth.api.getSession({ headers: ctx.headers });
 
         if (!session) {
@@ -69,7 +69,6 @@ export const auth = betterAuth({
 
         for await (const org of ownedOrganizations) {
           await auth.api.deleteOrganization({
-            // @ts-ignore
             headers: ctx.headers,
             body: { organizationId: org.id },
           });
