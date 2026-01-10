@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/core", "ultracite/next"],
+  "extends": ["ultracite/biome/core", "ultracite/biome/next"],
   "javascript": {
     "formatter": {
       "lineWidth": 100,
