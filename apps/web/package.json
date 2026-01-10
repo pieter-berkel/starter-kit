@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --bun next dev",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "clean": "git clean -xdf .next .turbo node_modules"
   },
   "dependencies": {
@@ -34,7 +34,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@total-typescript/tsconfig": "^1.0.4",
-    "@types/bun": "^1.3.3",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

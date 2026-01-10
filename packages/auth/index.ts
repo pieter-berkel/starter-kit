@@ -59,7 +59,8 @@ export const auth = betterAuth({
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path === "/delete-user") {
-        const session = await auth.api.getSession({ headers: ctx.headers });
+        const headers = ctx.headers ?? new Headers();
+        const session = await auth.api.getSession({ headers });
 
         if (!session) {
           throw new Error("Unauthorized");
@@ -69,7 +70,7 @@ export const auth = betterAuth({
 
         for await (const org of ownedOrganizations) {
           await auth.api.deleteOrganization({
-            headers: ctx.headers,
+            headers,
             body: { organizationId: org.id },
           });
         }

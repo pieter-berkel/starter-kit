@@ -8,13 +8,12 @@ export const dynamic = "force-static";
 
 const listAllPublishedPages = async () => {
   const all: { slug: string }[] = [];
-  let cursor: string | null = null;
+  let cursor: string | undefined;
 
   while (true) {
     const res: Awaited<ReturnType<typeof client.pages.list>> = await client.pages.list({
       pagination: { cursor, limit: 100 },
-      filter: { published: true },
-      orderBy: ["createdAt:desc"],
+      filters: { published: true },
     });
 
     all.push(...res.data.map((p) => ({ slug: p.slug })));
@@ -23,7 +22,7 @@ const listAllPublishedPages = async () => {
       break;
     }
 
-    cursor = res.meta.pagination.nextCursor;
+    cursor = res.meta.pagination.nextCursor ?? undefined;
   }
 
   return all;
@@ -42,14 +41,15 @@ export async function generateMetadata(props: PageProps<"/[[...slug]]">): Promis
   const { slug: slugArray } = await props.params;
   const slug = slugArray ? `/${slugArray.join("/")}` : "/";
 
-  const { data } = await client.pages.list({
-    pagination: { cursor: null, limit: 1 },
-    filter: { published: true, slug },
-  });
+  let page: Awaited<ReturnType<typeof client.pages.get>>["data"] | null = null;
+  try {
+    const res = await client.pages.get({ slug });
+    page = res.data;
+  } catch {
+    page = null;
+  }
 
-  const page = data[0] ?? null;
-
-  if (!page) {
+  if (!page?.published) {
     return {};
   }
 
@@ -67,14 +67,15 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
   const { slug: slugArray } = await props.params;
   const slug = slugArray ? `/${slugArray.join("/")}` : "/";
 
-  const { data } = await client.pages.list({
-    pagination: { cursor: null, limit: 1 },
-    filter: { published: true, slug },
-  });
+  let page: Awaited<ReturnType<typeof client.pages.get>>["data"] | null = null;
+  try {
+    const res = await client.pages.get({ slug });
+    page = res.data;
+  } catch {
+    page = null;
+  }
 
-  const page = data[0] ?? null;
-
-  if (!page) {
+  if (!page?.published) {
     notFound();
   }
 

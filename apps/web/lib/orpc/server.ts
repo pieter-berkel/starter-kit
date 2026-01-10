@@ -24,6 +24,6 @@ globalThis.$client = createRouterClient(router, {
   context: async () => ({
     headers: await getHeadersIfAvailable(),
     auth,
-    scope: "internal",
+    scope: "server",
   }),
 });
