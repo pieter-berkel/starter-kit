@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/performance/noNamespaceImport: Drizzle expects the schema as a namespace (`import * as schema`) so we can pass it to `drizzle()` and keep it strongly typed. */
 /** biome-ignore-all lint/style/noExportedImports: We intentionally re-export the `schema` namespace from this package so downstream packages can reference tables/types from a single entrypoint. */
 
-import { type NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
 import * as schema from "./schema";

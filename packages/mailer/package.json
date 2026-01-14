@@ -8,7 +8,7 @@
     "./templates/*": "./templates/*.tsx"
   },
   "scripts": {
-    "dev": "email dev --dir templates",
+    "dev": "email dev --dir templates --port 3010",
     "clean": "git clean -xdf node_modules"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-import { os } from "@orpc/server";
+import { onError, os } from "@orpc/server";
 import type { Auth } from "@workspace/auth";
 
 export type Scope = "client" | "server";
@@ -15,4 +15,8 @@ export type Context = {
   session?: Auth["$Infer"]["Session"] | null;
 };
 
-export const base = os.$context<Context>();
+export const base = os.$context<Context>().use(
+  onError((error) => {
+    console.error(error);
+  })
+);

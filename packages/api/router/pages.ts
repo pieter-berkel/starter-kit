@@ -1,34 +1,41 @@
 import { ORPCError } from "@orpc/client";
 import { db, schema } from "@workspace/db";
 import { createPageSchema, updatePageSchema } from "@workspace/db/schema";
-import { and, desc, eq, isNull, lt, or, type SQL, sql } from "drizzle-orm";
+import {
+  buildListQuery,
+  computeNextCursor,
+  defineListQueryDefinition,
+  listQuerySchema,
+} from "@workspace/db/utils/list-query";
+import { and, count, eq, isNull, sql } from "drizzle-orm";
 import z from "zod";
-import { decodeCursor, encodeCursor } from "../lib/cursor";
 import { base } from "../lib/orpc";
-import { paginationInput } from "../lib/schema";
+
+export const listConfig = defineListQueryDefinition({
+  id: schema.pages.id,
+  sortable: {
+    id: schema.pages.id,
+    title: schema.pages.title,
+    createdAt: schema.pages.createdAt,
+  },
+  defaultSort: { column: "createdAt", direction: "desc" },
+});
 
 export const pagesRouter = {
   list: base
     .input(
-      z
-        .object({
-          pagination: paginationInput,
-          filters: z.object({ published: z.boolean().optional() }).optional(),
-        })
-        .prefault({})
+      listQuerySchema(listConfig).extend({
+        filters: z.object({ published: z.boolean().optional() }).optional(),
+      })
     )
     .handler(async ({ input }) => {
-      const { pagination, filters } = input;
+      const compiled = buildListQuery(input, listConfig);
 
-      let cursorWhere: SQL | undefined;
-      if (pagination.cursor) {
-        const data = decodeCursor<{ createdAt: string; id: string }>(pagination.cursor);
-
-        cursorWhere = or(
-          lt(schema.pages.createdAt, new Date(data.createdAt)),
-          and(eq(schema.pages.createdAt, new Date(data.createdAt)), lt(schema.pages.id, data.id))
-        );
-      }
+      const where = and(
+        isNull(schema.pages.deletedAt),
+        input.filters?.published ? eq(schema.pages.published, input.filters.published) : undefined,
+        compiled.where
+      );
 
       const pages = await db.query.pages.findMany({
         columns: {
@@ -40,28 +47,38 @@ export const pagesRouter = {
           createdAt: true,
           updatedAt: true,
         },
-        where: and(
-          isNull(schema.pages.deletedAt),
-          filters?.published ? eq(schema.pages.published, filters.published) : undefined,
-          cursorWhere
-        ),
-        orderBy: [desc(schema.pages.createdAt), desc(schema.pages.id)],
-        limit: pagination.limit + 1,
+        where,
+        orderBy: compiled.orderBy,
+        limit: compiled.limit,
+        offset: compiled.offset,
       });
 
-      const hasNextPage = pages.length > pagination.limit;
-      const last = hasNextPage ? pages.pop() : null;
+      if (input.pagination.mode === "cursor") {
+        const hasMore = pages.length > input.pagination.limit;
+        const pageRows = hasMore ? pages.slice(0, -1) : pages;
 
-      const nextCursor = last
-        ? encodeCursor({ createdAt: last.createdAt.toISOString(), id: last.id })
-        : null;
+        return {
+          data: pageRows,
+          meta: {
+            pagination: {
+              hasNextPage: hasMore,
+              nextCursor: computeNextCursor(pageRows, compiled.cursorSort, listConfig),
+            },
+          },
+        };
+      }
+
+      const countResult = await db.select({ count: count() }).from(schema.pages).where(where);
+      const total = Number(countResult[0]?.count ?? 0);
 
       return {
         data: pages,
         meta: {
           pagination: {
-            hasNextPage,
-            nextCursor,
+            page: input.pagination.page,
+            pageSize: input.pagination.pageSize,
+            pageCount: Math.ceil(total / input.pagination.pageSize),
+            total,
           },
         },
       };

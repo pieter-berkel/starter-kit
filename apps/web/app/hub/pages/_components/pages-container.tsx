@@ -42,6 +42,8 @@ export const PagesContainer = () => {
   const { data, error, isLoading, refetch } = useQuery(
     orpc.pages.list.queryOptions({
       input: {
+        pagination: { mode: "cursor", limit: 1, cursor },
+        sort: [{ column: "createdAt", direction: "asc" }],
         filters: { published: true },
       },
       placeholderData: (prev) => prev,
@@ -141,7 +143,7 @@ export const PagesContainer = () => {
           <Button
             disabled={cursorHistory.length === 0}
             onClick={() => {
-              const prev = cursorHistory[cursorHistory.length - 1] ?? null;
+              const prev = cursorHistory.at(-1) ?? null;
               setCursorHistory((h) => h.slice(0, -1));
               setCursor(prev);
             }}
@@ -150,7 +152,7 @@ export const PagesContainer = () => {
             Previous
           </Button>
           <Button
-            disabled={!data.meta.pagination.nextCursor}
+            disabled={!data.meta.pagination.hasNextPage}
             onClick={() => {
               const next = data.meta.pagination.nextCursor ?? null;
               setCursorHistory((h) => [...h, cursor]);

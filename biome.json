@@ -9,6 +9,12 @@
   },
   "linter": {
     "rules": {
+      "style": {
+        "useConsistentTypeDefinitions": {
+          "level": "info",
+          "options": { "style": "type" }
+        }
+      },
       "suspicious": {
         "noShadowRestrictedNames": "off",
         "noExplicitAny": "off"
