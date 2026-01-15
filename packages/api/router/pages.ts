@@ -9,7 +9,7 @@ import {
 } from "@workspace/db/utils/list-query";
 import { and, count, eq, isNull, sql } from "drizzle-orm";
 import z from "zod";
-import { base } from "../lib/orpc";
+import { base, requireOrganizationMiddleware } from "../lib/orpc";
 
 export const listConfig = defineListQueryDefinition({
   id: schema.pages.id,
@@ -28,7 +28,8 @@ export const pagesRouter = {
         filters: z.object({ published: z.boolean().optional() }).optional(),
       })
     )
-    .handler(async ({ input }) => {
+    .use(requireOrganizationMiddleware)
+    .handler(async ({ input, context }) => {
       const compiled = buildListQuery(input, listConfig);
 
       const where = and(
