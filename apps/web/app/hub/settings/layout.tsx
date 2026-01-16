@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -24,17 +24,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <h1 className="font-bold text-3xl">Settings</h1>
         <div className="flex flex-wrap gap-3">
           {items.map((item) => (
-            <Link
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-                className: pathname === item.href ? "bg-accent text-accent-foreground" : "",
-              })}
-              href={item.href}
+            <Button
+              className={pathname === item.href ? "bg-accent text-accent-foreground" : ""}
               key={item.href}
+              nativeButton={false}
+              render={<Link href={item.href} />}
+              size="sm"
+              variant="ghost"
             >
               {item.label}
-            </Link>
+            </Button>
           ))}
         </div>
       </div>

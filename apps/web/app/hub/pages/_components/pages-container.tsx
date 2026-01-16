@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Button, buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -42,7 +42,7 @@ export const PagesContainer = () => {
   const { data, error, isLoading, refetch } = useQuery(
     orpc.pages.list.queryOptions({
       input: {
-        pagination: { mode: "cursor", limit: 1, cursor },
+        pagination: { mode: "cursor", cursor },
         sort: [{ column: "createdAt", direction: "asc" }],
         filters: { published: true },
       },
@@ -84,9 +84,9 @@ export const PagesContainer = () => {
           <EmptyDescription>Create a new page to get started.</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Link className={buttonVariants()} href="/hub/pages/create">
+          <Button nativeButton={false} render={<Link href="/hub/pages/create" />}>
             Create a new page
-          </Link>
+          </Button>
         </EmptyContent>
       </Empty>
     );

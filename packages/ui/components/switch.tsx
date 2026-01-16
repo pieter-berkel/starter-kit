@@ -1,34 +1,32 @@
-import * as React from "react";
-import { Switch as SwitchPrimitive } from "@base-ui-components/react/switch";
+"use client";
+
+import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 
 import { cn } from "@workspace/ui/lib/utils";
 
-function Switch({ className, children, ...props }: SwitchPrimitive.Root.Props) {
+function Switch({
+  className,
+  size = "default",
+  ...props
+}: SwitchPrimitive.Root.Props & {
+  size?: "sm" | "default";
+}) {
   return (
     <SwitchPrimitive.Root
-      data-slot="switch"
       className={cn(
-        "peer data-[checked]:bg-primary data-[unchecked]:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        "peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs outline-none transition-all after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 data-[size=default]:h-[18.4px] data-[size=sm]:h-[14px] data-[size=default]:w-[32px] data-[size=sm]:w-[24px] data-disabled:cursor-not-allowed data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-50 dark:data-unchecked:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
         className
       )}
+      data-size={size}
+      data-slot="switch"
       {...props}
     >
-      {children ?? <SwitchThumb />}
+      <SwitchPrimitive.Thumb
+        className="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:data-checked:bg-primary-foreground dark:data-unchecked:bg-foreground"
+        data-slot="switch-thumb"
+      />
     </SwitchPrimitive.Root>
   );
 }
 
-function SwitchThumb({ className, ...props }: SwitchPrimitive.Thumb.Props) {
-  return (
-    <SwitchPrimitive.Thumb
-      data-slot="switch-thumb"
-      className={cn(
-        "bg-background dark:data-[unchecked]:bg-foreground dark:data-[checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[checked]:translate-x-[calc(100%-2px)] data-[unchecked]:translate-x-0",
-        className
-      )}
-      {...props}
-    />
-  );
-}
-
-export { Switch, SwitchThumb };
+export { Switch };

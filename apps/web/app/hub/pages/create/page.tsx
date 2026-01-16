@@ -1,4 +1,4 @@
-import { buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { CreatePageForm } from "./_components/create-page-form";
@@ -11,10 +11,10 @@ export default function Page() {
           <h1 className="font-bold text-3xl">Create Page</h1>
           <p className="text-muted-foreground text-sm">Create a new page.</p>
         </div>
-        <Link className={buttonVariants({ variant: "ghost" })} href="/hub/pages">
+        <Button nativeButton={false} render={<Link href="/hub/pages" />} variant="ghost">
           <ArrowLeftIcon className="size-4" />
           <span>Back to pages</span>
-        </Link>
+        </Button>
       </div>
       <CreatePageForm />
     </div>

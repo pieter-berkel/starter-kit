@@ -5,7 +5,8 @@
   "private": true,
   "exports": {
     ".": "./index.ts",
-    "./client": "./client.ts"
+    "./client": "./client.ts",
+    "./permissions": "./permissions.ts"
   },
   "scripts": {
     "clean": "git clean -xdf node_modules"

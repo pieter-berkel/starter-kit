@@ -1,4 +1,4 @@
-import { buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -13,12 +13,12 @@ export default function NotFound() {
           Sorry, we couldn’t find the page you’re looking for.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link className={buttonVariants({ size: "lg" })} href="/">
+          <Button nativeButton={false} render={<Link href="/" />} size="lg">
             Go back home
-          </Link>
-          <Link className={buttonVariants({ size: "lg", variant: "ghost" })} href="/contact">
+          </Button>
+          <Button nativeButton={false} render={<Link href="/contact" />} size="lg" variant="ghost">
             Contact support <span aria-hidden="true">&rarr;</span>
-          </Link>
+          </Button>
         </div>
       </div>
     </main>

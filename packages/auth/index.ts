@@ -6,8 +6,14 @@ import { sendPasswordResetEmail } from "@workspace/mailer/templates/password-res
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
-import { admin, apiKey, createAuthMiddleware, organization } from "better-auth/plugins";
+import {
+  admin as adminPlugin,
+  apiKey,
+  createAuthMiddleware,
+  organization,
+} from "better-auth/plugins";
 import { and, eq, isNull, sql } from "drizzle-orm";
+import { ac, organizationRoles, systemRoles } from "./permissions";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
@@ -15,9 +21,13 @@ export const auth = betterAuth({
   user: { deleteUser: { enabled: true } },
   trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"],
   plugins: [
-    admin(),
-    apiKey(),
+    adminPlugin({
+      ac,
+      roles: systemRoles,
+    }),
     organization({
+      ac,
+      roles: organizationRoles,
       organizationLimit: 5,
       sendInvitationEmail: async (data) => {
         const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invitation/${data.id}`;
@@ -31,6 +41,7 @@ export const auth = betterAuth({
         });
       },
     }),
+    apiKey(),
     nextCookies(), // make sure nextCookies is the last plugin
   ],
   socialProviders: {

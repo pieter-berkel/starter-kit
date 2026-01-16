@@ -9,7 +9,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPositioner,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
@@ -84,41 +83,42 @@ export const OrgSwitcher = ({
             </div>
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuPositioner align="start" side={isMobile ? "bottom" : "right"} sideOffset={4}>
-            <DropdownMenuContent className="w-(--anchor-width) min-w-56 rounded-lg">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="text-muted-foreground text-xs">
-                  Organizations
-                </DropdownMenuLabel>
-                {organizations.map((org) => (
-                  <DropdownMenuItem
-                    className="gap-2 p-2"
-                    disabled={org.id === activeOrganizationId}
-                    key={org.id}
-                    onClick={() => setActiveOrganization(org.id)}
-                  >
-                    <Avatar className="size-6 rounded-md">
-                      <AvatarImage
-                        alt={org.name}
-                        src={org.logo ?? `https://api.dicebear.com/9.x/glass/svg?seed=${org.id}`}
-                      />
-                      <AvatarFallback className="rounded-md text-xs">
-                        {org.name.at(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    {org.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 p-2" render={<Link href="/onboarding" />}>
-                <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                  <PlusIcon className="size-4" />
-                </div>
-                <div className="font-medium text-muted-foreground">Add organization</div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenuPositioner>
+          <DropdownMenuContent
+            align="start"
+            className="w-(--anchor-width) min-w-56 rounded-lg"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-muted-foreground text-xs">
+                Organizations
+              </DropdownMenuLabel>
+              {organizations.map((org) => (
+                <DropdownMenuItem
+                  className="gap-2 p-2"
+                  disabled={org.id === activeOrganizationId}
+                  key={org.id}
+                  onClick={() => setActiveOrganization(org.id)}
+                >
+                  <Avatar className="size-6 rounded-md">
+                    <AvatarImage
+                      alt={org.name}
+                      src={org.logo ?? `https://api.dicebear.com/9.x/glass/svg?seed=${org.id}`}
+                    />
+                    <AvatarFallback className="rounded-md text-xs">{org.name.at(0)}</AvatarFallback>
+                  </Avatar>
+                  {org.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2" render={<Link href="/onboarding" />}>
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <PlusIcon className="size-4" />
+              </div>
+              <div className="font-medium text-muted-foreground">Add organization</div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

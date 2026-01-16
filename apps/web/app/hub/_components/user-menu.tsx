@@ -9,7 +9,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPositioner,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
@@ -70,50 +69,52 @@ export const UserMenu = ({ user }: { user: Auth["$Infer"]["Session"]["user"] }) 
             </div>
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuPositioner align="end" side={isMobile ? "top" : "right"} sideOffset={4}>
-            <DropdownMenuContent className="w-(--anchor-width) min-w-56 rounded-lg">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="size-8 rounded-lg">
-                      <AvatarImage
-                        alt={user.name}
-                        src={
-                          user.image ??
-                          `https://api.dicebear.com/9.x/notionists/svg?seed=${user.id}`
-                        }
-                      />
-                      <AvatarFallback className="rounded-lg font-bold uppercase">
-                        {user.name.at(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{user.name}</span>
-                      <span className="truncate text-xs">{user.email}</span>
-                    </div>
+          <DropdownMenuContent
+            align="end"
+            className="w-(--anchor-width) min-w-56 rounded-lg"
+            side={isMobile ? "top" : "right"}
+            sideOffset={4}
+          >
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="size-8 rounded-lg">
+                    <AvatarImage
+                      alt={user.name}
+                      src={
+                        user.image ?? `https://api.dicebear.com/9.x/notionists/svg?seed=${user.id}`
+                      }
+                    />
+                    <AvatarFallback className="rounded-lg font-bold uppercase">
+                      {user.name.at(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
                   </div>
-                </DropdownMenuLabel>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem render={<Link href="/hub/settings/account" />}>
-                  <User2Icon className="size-4" />
-                  My account
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={toggleTheme}>
-                  {resolvedTheme === "dark" ? <MoonIcon /> : <SunIcon />}
-                  Toggle theme
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOutIcon className="size-4" />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenuPositioner>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem render={<Link href="/hub/settings/account" />}>
+                <User2Icon className="size-4" />
+                My account
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={toggleTheme}>
+                {resolvedTheme === "dark" ? <MoonIcon /> : <SunIcon />}
+                Toggle theme
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOutIcon className="size-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

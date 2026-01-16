@@ -1,4 +1,4 @@
-import { buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -21,10 +21,10 @@ export default async function Page(props: PageProps<"/hub/pages/[id]">) {
         <div className="grid gap-2">
           <h1 className="font-bold text-3xl">Update Page</h1>
         </div>
-        <Link className={buttonVariants({ variant: "ghost" })} href="/hub/pages">
+        <Button nativeButton={false} render={<Link href="/hub/pages" />} variant="ghost">
           <ArrowLeftIcon className="size-4" />
           <span>Back to pages</span>
-        </Link>
+        </Button>
       </div>
       <UpdatePageCard defaultValues={page} id={id} />
       <DeletePageCard page={page} />

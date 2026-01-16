@@ -1,4 +1,4 @@
-import { buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { PagesContainer } from "./_components/pages-container";
@@ -11,10 +11,10 @@ export default function Page() {
           <h1 className="font-bold text-3xl">Pages</h1>
           <p className="text-muted-foreground text-sm">Manage your pages and their content.</p>
         </div>
-        <Link className={buttonVariants()} href="/hub/pages/create">
+        <Button nativeButton={false} render={<Link href="/hub/pages/create" />}>
           <PlusIcon className="size-4" />
           <span>Create Page</span>
-        </Link>
+        </Button>
       </div>
       <PagesContainer />
     </div>

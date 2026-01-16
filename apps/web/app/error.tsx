@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, buttonVariants } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -29,9 +29,9 @@ export default function Error({
           <Button onClick={reset} size="lg">
             Try again
           </Button>
-          <Link className={buttonVariants({ size: "lg", variant: "ghost" })} href="/">
+          <Button nativeButton={false} render={<Link href="/" />} size="lg" variant="ghost">
             Go back home <span aria-hidden="true">&rarr;</span>
-          </Link>
+          </Button>
         </div>
       </div>
     </main>

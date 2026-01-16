@@ -65,5 +65,3 @@ export const requireOrganizationMiddleware = requireAuthMiddleware.concat(
     return next({ context: { organization } });
   })
 );
-
-export const requirePermissionMiddleware = () => {};

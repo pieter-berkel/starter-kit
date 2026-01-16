@@ -21,7 +21,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectPositioner,
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
@@ -111,13 +110,11 @@ export const InviteMemberDialog = () => {
                     <SelectTrigger aria-invalid={fieldState.invalid} id="invite-member-role">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectPositioner>
-                      <SelectContent>
-                        <SelectItem value="member">Member</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="owner">Owner</SelectItem>
-                      </SelectContent>
-                    </SelectPositioner>
+                    <SelectContent>
+                      <SelectItem value="member">Member</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="owner">Owner</SelectItem>
+                    </SelectContent>
                   </Select>
                   {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
                 </Field>

@@ -16,7 +16,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuPositioner,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
@@ -129,22 +128,25 @@ export const MembersCard = ({
                           <span className="capitalize">{member.role}</span>
                           <ChevronDownIcon className="size-4" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuPositioner align="end" side="bottom" sideOffset={4}>
-                          <DropdownMenuContent className="w-44">
-                            <DropdownMenuRadioGroup
-                              onValueChange={(value) =>
-                                handleUpdateMemberRole({ memberId: member.id, role: value })
-                              }
-                              value={member.role}
-                            >
-                              <DropdownMenuRadioItem disabled={role !== "owner"} value="owner">
-                                Owner
-                              </DropdownMenuRadioItem>
-                              <DropdownMenuRadioItem value="admin">Admin</DropdownMenuRadioItem>
-                              <DropdownMenuRadioItem value="member">Member</DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenuPositioner>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-44"
+                          side="bottom"
+                          sideOffset={4}
+                        >
+                          <DropdownMenuRadioGroup
+                            onValueChange={(value) =>
+                              handleUpdateMemberRole({ memberId: member.id, role: value })
+                            }
+                            value={member.role}
+                          >
+                            <DropdownMenuRadioItem disabled={role !== "owner"} value="owner">
+                              Owner
+                            </DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="admin">Admin</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="member">Member</DropdownMenuRadioItem>
+                          </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
                       </DropdownMenu>
                       {["owner", "admin"].includes(role) && (
                         <DropdownMenu modal={false}>
@@ -155,15 +157,18 @@ export const MembersCard = ({
                           >
                             <EllipsisIcon className="size-4" />
                           </DropdownMenuTrigger>
-                          <DropdownMenuPositioner align="end" side="bottom" sideOffset={4}>
-                            <DropdownMenuContent className="w-44">
-                              <DropdownMenuItem
-                                onClick={() => handleRemoveMember({ memberId: member.id })}
-                              >
-                                Remove member
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenuPositioner>
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-44"
+                            side="bottom"
+                            sideOffset={4}
+                          >
+                            <DropdownMenuItem
+                              onClick={() => handleRemoveMember({ memberId: member.id })}
+                            >
+                              Remove member
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
                         </DropdownMenu>
                       )}
                     </ItemActions>
