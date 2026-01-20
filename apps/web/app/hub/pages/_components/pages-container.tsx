@@ -44,7 +44,6 @@ export const PagesContainer = () => {
       input: {
         pagination: { mode: "cursor", cursor },
         sort: [{ column: "createdAt", direction: "asc" }],
-        filters: { published: true },
       },
       placeholderData: (prev) => prev,
     })

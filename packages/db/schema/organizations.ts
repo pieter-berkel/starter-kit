@@ -10,3 +10,5 @@ export const organizations = pgTable("organizations", {
   metadata: text("metadata"),
   ...timestamps,
 });
+
+export type Organization = typeof organizations.$inferSelect;

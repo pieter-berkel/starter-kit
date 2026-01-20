@@ -8,38 +8,34 @@ import {
   defaultStatements as organizationDefaultStatements,
 } from "better-auth/plugins/organization/access";
 
-export const statement = {
+export const permissions = {
   ...systemDefaultStatements,
   ...organizationDefaultStatements,
-  project: ["create", "share", "update", "delete"],
+  page: ["create", "update", "delete"],
 } as const;
 
-export type Statement = typeof statement;
+export type Permissions = typeof permissions;
 
-export const ac = createAccessControl(statement);
+export const ac = createAccessControl(permissions);
 
 export const systemRoles = {
   user: ac.newRole({
     ...systemDefaultRoles.user.statements,
-    project: ["create"],
   }),
   admin: ac.newRole({
     ...systemDefaultRoles.admin.statements,
-    project: ["create", "update"],
+    page: ["create", "update", "delete"],
   }),
 };
 
 export const organizationRoles = {
   member: ac.newRole({
     ...organizationDefaultRoles.member.statements,
-    project: ["create"],
   }),
   admin: ac.newRole({
     ...organizationDefaultRoles.admin.statements,
-    project: ["create", "update"],
   }),
   owner: ac.newRole({
     ...organizationDefaultRoles.owner.statements,
-    project: ["create", "update", "delete"],
   }),
 };

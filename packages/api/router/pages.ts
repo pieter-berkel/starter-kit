@@ -9,7 +9,7 @@ import {
 } from "@workspace/db/utils/list-query";
 import { and, count, eq, isNull, sql } from "drizzle-orm";
 import z from "zod";
-import { base, requireOrganizationMiddleware } from "../lib/orpc";
+import { base, requirePermissionsMiddleware } from "../lib/orpc";
 
 export const listConfig = defineListQueryDefinition({
   id: schema.pages.id,
@@ -28,8 +28,7 @@ export const pagesRouter = {
         filters: z.object({ published: z.boolean().optional() }).optional(),
       })
     )
-    .use(requireOrganizationMiddleware)
-    .handler(async ({ input, context }) => {
+    .handler(async ({ input }) => {
       const compiled = buildListQuery(input, listConfig);
 
       const where = and(
@@ -115,20 +114,24 @@ export const pagesRouter = {
 
       return { data: page };
     }),
-  create: base.input(z.object({ data: createPageSchema })).handler(async ({ input }) => {
-    const [page] = await db
-      .insert(schema.pages)
-      .values(input.data)
-      .returning({ id: schema.pages.id });
+  create: base
+    .input(z.object({ data: createPageSchema }))
+    .use(requirePermissionsMiddleware({ page: ["create"] }))
+    .handler(async ({ input }) => {
+      const [page] = await db
+        .insert(schema.pages)
+        .values(input.data)
+        .returning({ id: schema.pages.id });
 
-    if (!page) {
-      throw new ORPCError("INTERNAL_SERVER_ERROR");
-    }
+      if (!page) {
+        throw new ORPCError("INTERNAL_SERVER_ERROR");
+      }
 
-    return { data: page };
-  }),
+      return { data: page };
+    }),
   update: base
     .input(z.object({ id: z.string(), data: updatePageSchema }))
+    .use(requirePermissionsMiddleware({ page: ["update"] }))
     .handler(async ({ input }) => {
       const [page] = await db
         .update(schema.pages)
@@ -142,17 +145,20 @@ export const pagesRouter = {
 
       return { data: page };
     }),
-  delete: base.input(z.object({ id: z.string() })).handler(async ({ input }) => {
-    const [page] = await db
-      .update(schema.pages)
-      .set({ deletedAt: sql`now()` })
-      .where(and(eq(schema.pages.id, input.id), isNull(schema.pages.deletedAt)))
-      .returning({ id: schema.pages.id });
+  delete: base
+    .input(z.object({ id: z.string() }))
+    .use(requirePermissionsMiddleware({ page: ["delete"] }))
+    .handler(async ({ input }) => {
+      const [page] = await db
+        .update(schema.pages)
+        .set({ deletedAt: sql`now()` })
+        .where(and(eq(schema.pages.id, input.id), isNull(schema.pages.deletedAt)))
+        .returning({ id: schema.pages.id });
 
-    if (!page) {
-      throw new ORPCError("NOT_FOUND");
-    }
+      if (!page) {
+        throw new ORPCError("NOT_FOUND");
+      }
 
-    return { data: page };
-  }),
+      return { data: page };
+    }),
 };
