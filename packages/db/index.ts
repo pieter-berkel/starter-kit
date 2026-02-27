@@ -9,41 +9,41 @@ import * as schema from "./schema";
 export type Database = NodePgDatabase<typeof schema>;
 
 declare global {
-  // Prevents multiple connections during HMR in dev
-  var __pgPool: Pool | undefined;
-  var __postgres: NodePgDatabase<typeof schema> | undefined;
+	// Prevents multiple connections during HMR in dev
+	var __pgPool: Pool | undefined;
+	var __postgres: NodePgDatabase<typeof schema> | undefined;
 }
 
 const getPool = () => {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set");
-  }
+	if (!process.env.DATABASE_URL) {
+		throw new Error("DATABASE_URL is not set");
+	}
 
-  return new Pool({ connectionString: process.env.DATABASE_URL });
+	return new Pool({ connectionString: process.env.DATABASE_URL });
 };
 
 const initDB = () => {
-  const pool = getPool();
-  return drizzle(pool, { schema, casing: "snake_case" });
+	const pool = getPool();
+	return drizzle(pool, { schema, casing: "snake_case" });
 };
 
 export const db: Database = (() => {
-  if (process.env.NODE_ENV === "production") {
-    return initDB();
-  }
+	if (process.env.NODE_ENV === "production") {
+		return initDB();
+	}
 
-  if (!globalThis.__pgPool) {
-    globalThis.__pgPool = getPool();
-  }
+	if (!globalThis.__pgPool) {
+		globalThis.__pgPool = getPool();
+	}
 
-  if (!globalThis.__postgres) {
-    globalThis.__postgres = drizzle(globalThis.__pgPool, {
-      schema,
-      casing: "snake_case",
-    });
-  }
+	if (!globalThis.__postgres) {
+		globalThis.__postgres = drizzle(globalThis.__pgPool, {
+			schema,
+			casing: "snake_case",
+		});
+	}
 
-  return globalThis.__postgres;
+	return globalThis.__postgres;
 })();
 
 export { schema };

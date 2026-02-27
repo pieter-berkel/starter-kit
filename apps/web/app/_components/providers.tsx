@@ -7,12 +7,17 @@ import { useState } from "react";
 import { createQueryClient } from "@/lib/query/client";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
-  const [queryClient] = useState(() => createQueryClient());
+	const [queryClient] = useState(() => createQueryClient());
 
-  return (
-    <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      <Toaster />
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider
+			attribute="class"
+			defaultTheme="system"
+			disableTransitionOnChange
+			enableSystem
+		>
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+			<Toaster />
+		</ThemeProvider>
+	);
 };

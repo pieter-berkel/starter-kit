@@ -1,22 +1,22 @@
 {
-  "extends": "@total-typescript/tsconfig/bundler/dom/app",
-  "compilerOptions": {
-    "incremental": true,
-    "verbatimModuleSyntax": false,
-    "jsx": "react-jsx",
-    "plugins": [{ "name": "next" }],
-    "paths": {
-      "@/*": ["./*"],
-      "@workspace/ui/*": ["../../packages/ui/*"]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.mts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"]
+	"extends": "@total-typescript/tsconfig/bundler/dom/app",
+	"compilerOptions": {
+		"incremental": true,
+		"verbatimModuleSyntax": false,
+		"jsx": "react-jsx",
+		"plugins": [{ "name": "next" }],
+		"paths": {
+			"@/*": ["./*"],
+			"@workspace/ui/*": ["../../packages/ui/*"]
+		}
+	},
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"**/*.mts",
+		".next/types/**/*.ts",
+		".next/dev/types/**/*.ts"
+	],
+	"exclude": ["node_modules"]
 }

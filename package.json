@@ -1,28 +1,27 @@
 {
-  "name": "workspace",
-  "devDependencies": {
-    "@biomejs/biome": "^2.3.11",
-    "prettier": "^3.7.4",
-    "shadcn": "^3.6.3",
-    "turbo": "^2.7.3",
-    "ultracite": "^7.0.11",
-    "typescript": "^5"
-  },
-  "packageManager": "pnpm@10.27.0",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "start": "turbo run start",
-    "clean": "git clean -xdf node_modules .turbo",
-    "clean:workspaces": "turbo run clean",
-    "check": "ultracite check",
-    "fix": "ultracite fix",
-    "db:push": "turbo run db:push --filter=@workspace/db",
-    "db:studio": "turbo run db:studio --filter=@workspace/db"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+	"name": "workspace",
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.4",
+		"prettier": "^3.8.1",
+		"shadcn": "^3.8.5",
+		"turbo": "^2.8.12",
+		"typescript": "^5"
+	},
+	"packageManager": "pnpm@10.27.0",
+	"private": true,
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"start": "turbo run start",
+		"clean": "git clean -xdf node_modules .turbo",
+		"clean:workspaces": "turbo run clean",
+		"check": "biome check .",
+		"fix": "biome check --write .",
+		"db:push": "turbo run db:push --filter=@workspace/db",
+		"db:studio": "turbo run db:studio --filter=@workspace/db"
+	},
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	]
 }

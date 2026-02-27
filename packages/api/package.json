@@ -1,26 +1,26 @@
 {
-  "name": "@workspace/api",
-  "version": "0.0.0",
-  "type": "module",
-  "private": true,
-  "exports": {
-    ".": "./index.ts"
-  },
-  "scripts": {
-    "clean": "git clean -xdf node_modules"
-  },
-  "dependencies": {
-    "@orpc/client": "^1.12.2",
-    "@orpc/server": "^1.12.2",
-    "@workspace/auth": "workspace:*",
-    "@workspace/db": "workspace:*",
-    "drizzle-orm": "^0.44.7",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@total-typescript/tsconfig": "^1.0.4",
-    "@types/node": "^22",
-    "@types/pg": "^8.16.0",
-    "typescript": "^5"
-  }
+	"name": "@workspace/api",
+	"version": "0.0.0",
+	"type": "module",
+	"private": true,
+	"exports": {
+		".": "./index.ts"
+	},
+	"scripts": {
+		"clean": "git clean -xdf node_modules"
+	},
+	"dependencies": {
+		"@orpc/client": "^1.12.2",
+		"@orpc/server": "^1.12.2",
+		"@workspace/auth": "workspace:*",
+		"@workspace/db": "workspace:*",
+		"drizzle-orm": "^0.44.7",
+		"zod": "^4.1.13"
+	},
+	"devDependencies": {
+		"@total-typescript/tsconfig": "^1.0.4",
+		"@types/node": "^22",
+		"@types/pg": "^8.16.0",
+		"typescript": "^5"
+	}
 }

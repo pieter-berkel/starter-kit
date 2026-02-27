@@ -7,17 +7,23 @@ import { createQueryClient } from "./client";
 
 export const getQueryClient = cache(createQueryClient);
 
-export const prefetch = <T extends QueryOptionsBase<any, any>>(queryOptions: T) => {
-  const queryClient = getQueryClient();
-  if ((queryOptions.queryKey[1] as any)?.type === "infinite") {
-    void queryClient.prefetchInfiniteQuery(queryOptions as any);
-  } else {
-    void queryClient.prefetchQuery(queryOptions);
-  }
+export const prefetch = <T extends QueryOptionsBase<any, any>>(
+	queryOptions: T,
+) => {
+	const queryClient = getQueryClient();
+	if ((queryOptions.queryKey[1] as any)?.type === "infinite") {
+		void queryClient.prefetchInfiniteQuery(queryOptions as any);
+	} else {
+		void queryClient.prefetchQuery(queryOptions);
+	}
 };
 
 export const HydrateClient = (props: { children: React.ReactNode }) => {
-  const client = getQueryClient();
+	const client = getQueryClient();
 
-  return <HydrationBoundary state={dehydrate(client)}>{props.children}</HydrationBoundary>;
+	return (
+		<HydrationBoundary state={dehydrate(client)}>
+			{props.children}
+		</HydrationBoundary>
+	);
 };

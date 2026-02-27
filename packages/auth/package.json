@@ -1,26 +1,26 @@
 {
-  "name": "@workspace/auth",
-  "version": "0.0.0",
-  "type": "module",
-  "private": true,
-  "exports": {
-    ".": "./index.ts",
-    "./client": "./client.ts",
-    "./permissions": "./permissions.ts"
-  },
-  "scripts": {
-    "clean": "git clean -xdf node_modules"
-  },
-  "dependencies": {
-    "@workspace/db": "workspace:*",
-    "@workspace/mailer": "workspace:*",
-    "better-auth": "^1.4.5",
-    "drizzle-orm": "^0.44.7"
-  },
-  "devDependencies": {
-    "@total-typescript/tsconfig": "^1.0.4",
-    "@types/node": "^22",
-    "@types/pg": "^8.16.0",
-    "typescript": "^5"
-  }
+	"name": "@workspace/auth",
+	"version": "0.0.0",
+	"type": "module",
+	"private": true,
+	"exports": {
+		".": "./index.ts",
+		"./client": "./client.ts",
+		"./permissions": "./permissions.ts"
+	},
+	"scripts": {
+		"clean": "git clean -xdf node_modules"
+	},
+	"dependencies": {
+		"@workspace/db": "workspace:*",
+		"@workspace/mailer": "workspace:*",
+		"better-auth": "^1.4.5",
+		"drizzle-orm": "^0.44.7"
+	},
+	"devDependencies": {
+		"@total-typescript/tsconfig": "^1.0.4",
+		"@types/node": "^22",
+		"@types/pg": "^8.16.0",
+		"typescript": "^5"
+	}
 }

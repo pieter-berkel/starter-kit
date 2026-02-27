@@ -5,16 +5,16 @@ import { auth } from "@workspace/auth";
 const handler = new RPCHandler(router);
 
 const handleRequest = async (request: Request) => {
-  const { response } = await handler.handle(request, {
-    prefix: "/rpc",
-    context: {
-      headers: request.headers,
-      auth,
-      scope: "client",
-    },
-  });
+	const { response } = await handler.handle(request, {
+		prefix: "/rpc",
+		context: {
+			headers: request.headers,
+			auth,
+			scope: "client",
+		},
+	});
 
-  return response ?? new Response("Not found", { status: 404 });
+	return response ?? new Response("Not found", { status: 404 });
 };
 
 export const HEAD = handleRequest;

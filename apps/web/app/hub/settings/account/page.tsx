@@ -7,27 +7,34 @@ import { SessionsCard } from "./_components/sessions-card";
 import { UpdatePasswordCard } from "./_components/update-password-card";
 
 export default async function Page() {
-  const headersList = await headers();
+	const headersList = await headers();
 
-  const [session, sessions] = await Promise.all([
-    auth.api.getSession({ headers: headersList }),
-    auth.api.listSessions({ headers: headersList }),
-  ]);
+	const [session, sessions] = await Promise.all([
+		auth.api.getSession({ headers: headersList }),
+		auth.api.listSessions({ headers: headersList }),
+	]);
 
-  if (!session) {
-    redirect("/sign-in");
-  }
+	if (!session) {
+		redirect("/sign-in");
+	}
 
-  sessions.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+	sessions.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
-  const ownedOrganizations = await getOwnedOrganizations({ userId: session.user.id });
+	const ownedOrganizations = await getOwnedOrganizations({
+		userId: session.user.id,
+	});
 
-  return (
-    <div className="flex flex-col gap-8">
-      <DetailsCard defaultValues={{ name: session.user.name, email: session.user.email }} />
-      <UpdatePasswordCard />
-      <SessionsCard activeSessionId={session.session.id} sessions={sessions} />
-      <DeleteAccountCard ownedOrganizations={ownedOrganizations} user={session.user} />
-    </div>
-  );
+	return (
+		<div className="flex flex-col gap-8">
+			<DetailsCard
+				defaultValues={{ name: session.user.name, email: session.user.email }}
+			/>
+			<UpdatePasswordCard />
+			<SessionsCard activeSessionId={session.session.id} sessions={sessions} />
+			<DeleteAccountCard
+				ownedOrganizations={ownedOrganizations}
+				user={session.user}
+			/>
+		</div>
+	);
 }
