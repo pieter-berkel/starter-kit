@@ -12,19 +12,19 @@
 		"clean": "git clean -xdf node_modules"
 	},
 	"dependencies": {
-		"@react-email/components": "^1.0.1",
-		"dedent": "^1.7.0",
-		"resend": "^6.5.2",
-		"react": "19.2.1",
-		"react-dom": "19.2.1"
+		"@react-email/components": "^1.0.8",
+		"dedent": "^1.7.1",
+		"react": "19.2.4",
+		"react-dom": "19.2.4",
+		"resend": "^6.9.2"
 	},
 	"devDependencies": {
 		"@react-email/preview-server": "5.0.5",
 		"@total-typescript/tsconfig": "^1.0.4",
-		"@types/node": "^22",
-		"@types/react": "^19",
-		"@types/react-dom": "^19",
+		"@types/node": "^22.19.13",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
 		"react-email": "5.0.5",
-		"typescript": "^5"
+		"typescript": "^5.9.3"
 	}
 }

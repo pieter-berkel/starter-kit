@@ -17,7 +17,7 @@ const listAllPublishedPages = async () => {
 	while (true) {
 		const res: Awaited<ReturnType<typeof client.pages.list>> =
 			await client.pages.list({
-				pagination: { cursor, limit: 100 },
+				pagination: { mode: "cursor", cursor, limit: 100 },
 				filters: { published: true },
 			});
 

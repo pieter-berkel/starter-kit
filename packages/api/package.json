@@ -10,17 +10,17 @@
 		"clean": "git clean -xdf node_modules"
 	},
 	"dependencies": {
-		"@orpc/client": "^1.12.2",
-		"@orpc/server": "^1.12.2",
+		"@orpc/client": "^1.13.5",
+		"@orpc/server": "^1.13.5",
 		"@workspace/auth": "workspace:*",
 		"@workspace/db": "workspace:*",
-		"drizzle-orm": "^0.44.7",
-		"zod": "^4.1.13"
+		"drizzle-orm": "^0.45.1",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@total-typescript/tsconfig": "^1.0.4",
-		"@types/node": "^22",
+		"@types/node": "^22.19.13",
 		"@types/pg": "^8.16.0",
-		"typescript": "^5"
+		"typescript": "^5.9.3"
 	}
 }
