@@ -4,14 +4,10 @@ import { sendEmailVerificationEmail } from "@workspace/mailer/templates/email-ve
 import { sendMemberInvitationEmail } from "@workspace/mailer/templates/member-invitation";
 import { sendPasswordResetEmail } from "@workspace/mailer/templates/password-reset";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { createAuthMiddleware } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
-import {
-	admin as adminPlugin,
-	apiKey,
-	createAuthMiddleware,
-	organization,
-} from "better-auth/plugins";
+import { admin as adminPlugin, organization } from "better-auth/plugins";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { ac, organizationRoles, systemRoles } from "./permissions";
 
@@ -41,7 +37,6 @@ export const auth = betterAuth({
 				});
 			},
 		}),
-		apiKey(),
 		nextCookies(), // make sure nextCookies is the last plugin
 	],
 	socialProviders: {

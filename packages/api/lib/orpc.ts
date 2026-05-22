@@ -24,7 +24,9 @@ export const base = os.$context<Context>();
 export const authMiddleware = base.middleware(async ({ context, next }) => {
 	const session =
 		context.session ??
-		(await context.auth.api.getSession({ headers: context.headers }));
+		(context.headers
+			? await context.auth.api.getSession({ headers: context.headers })
+			: null);
 
 	return next({ context: { session } });
 });
@@ -106,6 +108,10 @@ export const requireOrganizationPermissionsMiddleware = (permissions: {
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "No organization found",
 				});
+			}
+
+			if (!context.headers) {
+				throw new ORPCError("UNAUTHORIZED", { message: "No session found" });
 			}
 
 			const { success } = await context.auth.api.hasPermission({
