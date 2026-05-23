@@ -1,4 +1,4 @@
-import { resend } from "./resend";
+import { getResend } from "./resend";
 
 export type SendEmailArgs = {
 	from: string;
@@ -24,7 +24,7 @@ export type SendEmailArgs = {
 };
 
 export const send = async (args: SendEmailArgs) => {
-	const { error } = await resend.emails.send({
+	const { error } = await getResend().emails.send({
 		...args,
 		text: args.text || "",
 	});

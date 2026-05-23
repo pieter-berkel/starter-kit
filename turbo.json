@@ -27,5 +27,5 @@
 		}
 	},
 	"globalEnv": ["NODE_ENV"],
-	"globalPassThroughEnv": ["DATABASE_URL"]
+	"globalPassThroughEnv": ["DATABASE_URL", "RESEND_API_KEY"]
 }

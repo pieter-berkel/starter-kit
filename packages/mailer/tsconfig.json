@@ -1,7 +1,8 @@
 {
 	"extends": "@total-typescript/tsconfig/bundler/dom/library-monorepo",
 	"compilerOptions": {
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"types": ["node"]
 	},
 	"include": ["."],
 	"exclude": ["node_modules", ".turbo"]
