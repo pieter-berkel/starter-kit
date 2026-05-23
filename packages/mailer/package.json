@@ -12,18 +12,18 @@
 		"clean": "git clean -xdf node_modules"
 	},
 	"dependencies": {
-		"@react-email/ui": "^6.3.1",
+		"@react-email/ui": "^6.3.2",
 		"dedent": "^1.7.2",
 		"react": "19.2.6",
 		"react-dom": "19.2.6",
-		"resend": "^6.12.3",
-		"react-email": "^6.3.1"
+		"react-email": "^6.3.2",
+		"resend": "^6.12.3"
 	},
 	"devDependencies": {
 		"@total-typescript/tsconfig": "^1.0.4",
-		"@types/node": "^22",
+		"@types/node": "^22.19.19",
 		"@types/react": "^19.2.15",
 		"@types/react-dom": "^19.2.3",
-		"typescript": "^5.9.3"
+		"typescript": "^6.0.3"
 	}
 }
