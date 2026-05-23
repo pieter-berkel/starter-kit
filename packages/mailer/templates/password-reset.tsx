@@ -9,11 +9,10 @@ import {
 	pixelBasedPreset,
 	Tailwind,
 	Text,
-} from "@react-email/components";
-import { send } from "..";
+} from "react-email";
 import { getBaseURL } from "../lib/utils";
 
-type PasswordResetEmailProps = {
+export type PasswordResetEmailProps = {
 	link: string;
 	name: string;
 };
@@ -86,19 +85,5 @@ PasswordResetEmail.PreviewProps = {
 	link: `${getBaseURL()}/reset-password`,
 	name: "John Doe",
 } satisfies PasswordResetEmailProps;
-
-export const sendPasswordResetEmail = async ({
-	to,
-	...args
-}: PasswordResetEmailProps & { to: string }) => {
-	const hostname = "pieterberkel.nl";
-
-	await send({
-		to,
-		from: `noreply@${hostname}`,
-		subject: "Reset your password",
-		react: <PasswordResetEmail {...args} />,
-	});
-};
 
 export default PasswordResetEmail;

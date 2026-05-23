@@ -9,11 +9,10 @@ import {
 	pixelBasedPreset,
 	Tailwind,
 	Text,
-} from "@react-email/components";
-import { send } from "..";
+} from "react-email";
 import { getBaseURL } from "../lib/utils";
 
-type MemberInvitationEmailProps = {
+export type MemberInvitationEmailProps = {
 	organizationName: string;
 	invitedByUsername: string;
 	invitedByEmail: string;
@@ -93,19 +92,5 @@ MemberInvitationEmail.PreviewProps = {
 	invitedByEmail: "john.doe@example.com",
 	inviteLink: `${getBaseURL()}/accept-invitation`,
 } satisfies MemberInvitationEmailProps;
-
-export const sendMemberInvitationEmail = async ({
-	to,
-	...args
-}: MemberInvitationEmailProps & { to: string }) => {
-	const hostname = "pieterberkel.nl";
-
-	await send({
-		to,
-		from: `noreply@${hostname}`,
-		subject: `You've been invited to join ${args.organizationName}`,
-		react: <MemberInvitationEmail {...args} />,
-	});
-};
 
 export default MemberInvitationEmail;

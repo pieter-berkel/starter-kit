@@ -9,11 +9,10 @@ import {
 	pixelBasedPreset,
 	Tailwind,
 	Text,
-} from "@react-email/components";
-import { send } from "..";
+} from "react-email";
 import { getBaseURL } from "../lib/utils";
 
-type EmailVerificationEmailProps = {
+export type EmailVerificationEmailProps = {
 	link: string;
 	name: string;
 };
@@ -85,19 +84,5 @@ EmailVerificationEmail.PreviewProps = {
 	link: `${getBaseURL()}/verify-email`,
 	name: "John Doe",
 } satisfies EmailVerificationEmailProps;
-
-export const sendEmailVerificationEmail = async ({
-	to,
-	...args
-}: EmailVerificationEmailProps & { to: string }) => {
-	const hostname = "pieterberkel.nl";
-
-	await send({
-		to,
-		from: `noreply@${hostname}`,
-		subject: "Verify your email address",
-		react: <EmailVerificationEmail {...args} />,
-	});
-};
 
 export default EmailVerificationEmail;

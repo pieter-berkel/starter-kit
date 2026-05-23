@@ -1,8 +1,10 @@
 import { db, schema } from "@workspace/db";
 import { generateID } from "@workspace/db/utils/id-generator";
-import { sendEmailVerificationEmail } from "@workspace/mailer/templates/email-verification";
-import { sendMemberInvitationEmail } from "@workspace/mailer/templates/member-invitation";
-import { sendPasswordResetEmail } from "@workspace/mailer/templates/password-reset";
+import {
+	sendEmailVerificationEmail,
+	sendMemberInvitationEmail,
+	sendPasswordResetEmail,
+} from "@workspace/mailer";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
