@@ -6,7 +6,8 @@ pnpm monorepo: Next.js app (`apps/web`), oRPC API, Drizzle database, and shared 
 pnpm dev          # run all apps
 pnpm check        # lint/format (Biome)
 pnpm build        # build + typecheck
-pnpm db:push      # sync database schema
+pnpm db:generate  # generate migration from schema changes
+pnpm db:migrate   # apply pending migrations
 ```
 
 ## Package guides

@@ -7,8 +7,9 @@ Drizzle ORM schema, Zod validation for app-owned resources, and shared database 
 **Database commands:**
 
 ```bash
-pnpm db:push    # sync schema to the database
-pnpm db:studio  # open Drizzle Studio
+pnpm db:generate  # generate migration from schema changes
+pnpm db:migrate   # apply pending migrations
+pnpm db:studio    # open Drizzle Studio
 ```
 
 **Imports:** `@workspace/db` · `@workspace/db/schema` · `@workspace/db/utils/<name>`

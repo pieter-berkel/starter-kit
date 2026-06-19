@@ -19,6 +19,7 @@ export default async function Layout({
 	const organizations = await auth.api.listOrganizations({
 		headers: await headers(),
 	});
+
 	const session = await auth.api.getSession({ headers: await headers() });
 
 	if (!session?.session.activeOrganizationId) {

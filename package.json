@@ -6,10 +6,12 @@
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"start": "turbo run start",
-		"clean": "turbo run clean --filter=!./ && git clean -xdf node_modules .turbo",
+		"clean": "git clean -xdf node_modules .turbo",
+		"clean:workspaces": "turbo run clean",
 		"check": "biome check .",
 		"fix": "biome check --write .",
-		"db:push": "turbo run db:push --filter=@workspace/db",
+		"db:generate": "turbo run db:generate --filter=@workspace/db",
+		"db:migrate": "turbo run db:migrate --filter=@workspace/db",
 		"db:studio": "turbo run db:studio --filter=@workspace/db"
 	},
 	"devDependencies": {

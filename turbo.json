@@ -18,7 +18,13 @@
 		"clean": {
 			"cache": false
 		},
-		"db:push": {
+		"//#clean": {
+			"cache": false
+		},
+		"db:generate": {
+			"cache": false
+		},
+		"db:migrate": {
 			"cache": false
 		},
 		"db:studio": {
