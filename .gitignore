@@ -29,3 +29,5 @@ dist/
 
 tmp/
 *.tmp
+
+.pnpm-store

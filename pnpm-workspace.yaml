@@ -2,7 +2,8 @@ packages:
   - "apps/*"
   - "packages/*"
 
-onlyBuiltDependencies:
-  - esbuild
-  - msw
-  - sharp
+allowBuilds:
+  esbuild: true
+  msgpackr-extract: true
+  msw: true
+  sharp: true

@@ -21,6 +21,6 @@
 		"@total-typescript/tsconfig": "^1.0.4",
 		"@types/node": "^22.19.19",
 		"@types/pg": "^8.20.0",
-		"typescript": "^6.0.3"
+		"typescript": "7"
 	}
 }
